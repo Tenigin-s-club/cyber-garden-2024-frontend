@@ -40,7 +40,7 @@ const LoginForm = () => {
     console.log(values);
   }
   return (
-    <div className="rounded-lg border bg-card text-card-foreground shadow-sm flex flex-col space-y-1.5 p-6">
+    <div className="w-96 rounded-lg border bg-card text-card-foreground shadow-sm flex flex-col space-y-1.5 p-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
