@@ -7,7 +7,7 @@ function App() {
   return (
     <>
       <ToastContainer />
-      <RouterProvider router={appRoutersConfig} />;
+      <RouterProvider router={appRoutersConfig} />
     </>
   );
 }

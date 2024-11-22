@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+examples
+react-figma-miro-canvas-part-3
 
 # Editor directories and files
 .vscode/*
