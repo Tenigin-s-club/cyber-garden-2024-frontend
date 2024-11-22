@@ -14,6 +14,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { loginFetch } from "@/services/AuthByEmail/AuthByEmail";
 import { useNavigate } from "react-router-dom";
+import Title from "../ui/title";
 
 const formSchema = z.object({
   email: z.string().email({ message: "incorrect email" }),
@@ -24,7 +25,7 @@ const formSchema = z.object({
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  // 1. Define your form.
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,7 +34,6 @@ const LoginForm = () => {
     },
   });
 
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const res = await loginFetch(values.email, values.password);
     if (res) navigate("/");
@@ -42,7 +42,12 @@ const LoginForm = () => {
   return (
     <div className="w-96 rounded-lg border bg-card text-card-foreground shadow-sm flex flex-col space-y-1.5 p-6">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <Title size="sm" text={"Авторизация"} />
+          <p>
+            Введите свой адрес электронной почты ниже, чтобы войти в свою
+            учетную запись
+          </p>
           <FormField
             control={form.control}
             name="email"
@@ -72,7 +77,7 @@ const LoginForm = () => {
             )}
           />
           <Button type="submit" className="w-full">
-            Submit
+            Войти
           </Button>
         </form>
       </Form>

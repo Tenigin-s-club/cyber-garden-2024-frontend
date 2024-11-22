@@ -12,3 +12,10 @@ export interface OfficesEmployee {
   // то, что на столе
   inventory: OfficesEmployeeInventory[];
 }
+
+export interface OfficesUser {
+  fio: string;
+  position: string;
+  email: string;
+  password: string;
+}

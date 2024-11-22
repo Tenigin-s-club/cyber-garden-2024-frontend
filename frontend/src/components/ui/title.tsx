@@ -30,7 +30,7 @@ const Title = ({ text, size = "sm", className }: Props) => {
 
   return React.createElement(
     mapTagSize[size],
-    { className: cn(mapClassNameBySize[size], className) },
+    { className: cn(mapClassNameBySize[size], className, "font-bold") },
     text
   );
 };
