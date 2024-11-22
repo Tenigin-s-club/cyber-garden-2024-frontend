@@ -3,9 +3,11 @@ import { ProtectedRoute } from "@/components/shared/ProtectedRoute";
 import { AuthPage } from "@/pages/AuthPage";
 import MainPage from "@/pages/MainPage";
 import { Map } from "@/pages/Map";
-import TablePage from "@/pages/TablePage";
+import EmployeesTablePage from "@/pages/EmployeesTablePage";
+import LogoIcon from "@/assets/logo.svg";
 
 import { createBrowserRouter, RouteObject } from "react-router-dom";
+import Container from "@/components/ui/container";
 
 const authRoutes: RouteObject[] = [
   {
@@ -18,6 +20,17 @@ export const appRoutersConfig = createBrowserRouter([
   ...authRoutes,
   {
     path: "/",
+    element: (
+      <Container>
+        <div className="w-full flex pt-5">
+          <LogoIcon />
+        </div>
+        <MainPage />
+      </Container>
+    ),
+  },
+  {
+    path: "/",
     element: <Layout />,
     errorElement: (
       <ProtectedRoute>
@@ -25,16 +38,16 @@ export const appRoutersConfig = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
+      // {
+      //   path: "/",
+      //   element: <MainPage />,
+      // },
       {
-        path: "/",
-        element: <MainPage />,
+        path: "/employees/:id",
+        element: <EmployeesTablePage />,
       },
       {
-        path: "/employees",
-        element: <TablePage />,
-      },
-      {
-        path: "/map",
+        path: "/map/:id",
         element: <Map />,
       },
     ],

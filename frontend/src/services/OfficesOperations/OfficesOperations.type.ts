@@ -19,3 +19,10 @@ export interface OfficesUser {
   email: string;
   password: string;
 }
+
+export interface Office {
+  id: number;
+  name: string;
+  image: string;
+  address: string;
+}
