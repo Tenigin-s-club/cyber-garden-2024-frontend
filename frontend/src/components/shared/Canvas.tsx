@@ -20,12 +20,25 @@ export const Canvas = ({
 
     setCards(
       cards.map((card) => {
-        if (card.id === active.id) {
+        if (
+          card.id === active.id &&
+          !cards.find(
+            (cardWas) =>
+              card.coordinates.x === cardWas.coordinates.x &&
+              card.coordinates.y === cardWas.coordinates.y
+          )
+        ) {
           return {
             ...card,
             coordinates: {
-              x: card.coordinates.x + delta.x,
-              y: card.coordinates.y + delta.y,
+              x:
+                card.coordinates.x + delta.x >= 0
+                  ? card.coordinates.x + delta.x
+                  : card.coordinates.x,
+              y:
+                card.coordinates.y + delta.y >= 0
+                  ? card.coordinates.y + delta.y
+                  : card.coordinates.y,
             },
           };
         }

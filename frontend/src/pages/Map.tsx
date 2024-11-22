@@ -4,6 +4,7 @@ import {
   DragOverlay,
   Over,
   UniqueIdentifier,
+  useDraggable,
 } from "@dnd-kit/core";
 import { useMemo, useState } from "react";
 import { createSnapModifier } from "@dnd-kit/modifiers";
@@ -61,7 +62,11 @@ export const Map = () => {
   const snapToGrid = useMemo(() => createSnapModifier(gridSize), [gridSize]);
 
   const [mapItems, setMapItems] = useState<Card[]>([]);
-  const [_, setDraggedTrayCardId] = useState<UniqueIdentifier | null>(null);
+  const [draggedTrayCardId, setDraggedTrayCardId] =
+    useState<UniqueIdentifier | null>(null);
+  const { transform } = useDraggable({
+    id: draggedTrayCardId || 0,
+  });
 
   const addDraggedTrayCardToCanvas = ({
     over,
@@ -72,6 +77,18 @@ export const Map = () => {
 
     if (over?.id !== "canvas") return;
     if (!active.rect.current.initial) return;
+    if (
+      mapItems.find(
+        (card) =>
+          active.rect.current.initial &&
+          card.coordinates.x ===
+            calculateCanvasPosition(active.rect.current.initial, over, delta)
+              .x &&
+          card.coordinates.y ===
+            calculateCanvasPosition(active.rect.current.initial, over, delta).y
+      )
+    )
+      return;
 
     setMapItems([
       ...mapItems,
@@ -88,24 +105,40 @@ export const Map = () => {
   };
 
   return (
-    <DndContext
-      onDragStart={({ active }) => setDraggedTrayCardId(active.id)}
-      modifiers={[snapToGrid]}
-      onDragEnd={addDraggedTrayCardToCanvas}
-    >
-      <div className="box-content p-2 border border-chocolate rounded bg-bisque text-black cursor-grab size-5 text-center">
-        {trayCards.map((trayCard) => {
-          // this line removes the card from the tray if it's already on the canvas
-          if (mapItems.find((card) => card.id === trayCard.id)) return null;
+    <>
+      <h1 className="text-4xl">СТРОИТЕЛЬ ПЕНИСОВ ОНЛАЙН</h1>
+      <DndContext
+        onDragStart={({ active }) => setDraggedTrayCardId(active.id)}
+        modifiers={[snapToGrid]}
+        onDragEnd={addDraggedTrayCardToCanvas}
+      >
+        <div className="box-content p-2 border border-chocolate rounded bg-bisque text-black cursor-grab size-5 text-center">
+          {trayCards.map((trayCard) => {
+            // this line removes the card from the tray if it's already on the canvas
+            if (mapItems.find((card) => card.id === trayCard.id)) return null;
 
-          return <Addable card={trayCard} key={trayCard.id} />;
-        })}
-      </div>
+            return <Addable card={trayCard} key={trayCard.id} />;
+          })}
+        </div>
 
-      <Canvas cards={mapItems} setCards={setMapItems} />
-      <DragOverlay>
-        <div className="box-border border border-chocolate rounded bg-bisque text-black cursor-grab text-center size-4 text-base bg-red-500" />
-      </DragOverlay>
-    </DndContext>
+        <Canvas cards={mapItems} setCards={setMapItems} />
+        <DragOverlay dropAnimation={null}>
+          <div
+            className="box-border border border-chocolate rounded bg-bisque text-black cursor-grab text-center size-5 text-base bg-red-500"
+            style={{
+              ...(transform
+                ? {
+                    // temporary change to this position when dragging
+                    transform: `translate3d(${transform.x}px, ${transform.y}px, 0px)`,
+                  }
+                : {
+                    // zoom to canvas zoom
+                    transform: ``,
+                  }),
+            }}
+          />
+        </DragOverlay>
+      </DndContext>
+    </>
   );
 };

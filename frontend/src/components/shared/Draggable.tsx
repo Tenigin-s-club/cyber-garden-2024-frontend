@@ -8,21 +8,21 @@ export const Draggable = ({ card }: { card: Card }) => {
 
   return (
     <div
-      className="box-border border border-chocolate rounded bg-bisque text-black cursor-grab text-center w-5 h-5 bg-red-500"
+      className="box-border border border-chocolate rounded bg-bisque text-black cursor-grab text-center w-5 h-5 bg-red-500 opacity-50"
       style={{
         position: "absolute",
         top: `${card.coordinates.y}px`,
         left: `${card.coordinates.x}px`,
         transformOrigin: "top left",
-        // ...(transform
-        //   ? {
-        //       // temporary change to this position when dragging
-        //       transform: `translate3d(${transform.x}px, ${transform.y}px, 0px)`,
-        //     }
-        //   : {
-        //       // zoom to canvas zoom
-        //       transform: ``,
-        //     }),
+        ...(transform
+          ? {
+              // temporary change to this position when dragging
+              transform: `translate3d(${transform.x}px, ${transform.y}px, 0px)`,
+            }
+          : {
+              // zoom to canvas zoom
+              transform: ``,
+            }),
       }}
       ref={setNodeRef}
       {...listeners}
