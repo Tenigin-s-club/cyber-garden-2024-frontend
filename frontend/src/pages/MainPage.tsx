@@ -1,11 +1,5 @@
-import { Map } from "./Map";
-
 const MainPage = () => {
-  return (
-    <div>
-      <Map />
-    </div>
-  );
+  return <div>test</div>;
 };
 
 export default MainPage;

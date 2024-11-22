@@ -2,6 +2,7 @@ import Layout from "@/components/shared/layout";
 import { ProtectedRoute } from "@/components/shared/ProtectedRoute";
 import { AuthPage } from "@/pages/AuthPage";
 import MainPage from "@/pages/MainPage";
+import { Map } from "@/pages/Map";
 import TablePage from "@/pages/TablePage";
 
 import { createBrowserRouter, RouteObject } from "react-router-dom";
@@ -34,7 +35,7 @@ export const appRoutersConfig = createBrowserRouter([
       },
       {
         path: "/map",
-        element: <div>MapPage</div>,
+        element: <Map />,
       },
     ],
   },
