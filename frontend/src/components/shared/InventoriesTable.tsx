@@ -16,14 +16,19 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { PenLine, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { AddInventoryBlock } from "./AddInventoryBlock";
 import { AssignedEmployeeBlock } from "./AssignedEmployeeBlock";
-import { Inventory } from "@/services/OfficesOperations/OfficesOperations.type";
+import {
+  Inventory,
+  OfficesEmployee,
+} from "@/services/OfficesOperations/OfficesOperations.type";
 import { deleteInventory } from "@/services/BuildOperations/BuildOperations";
+import { getOfficesEmployees } from "@/services/OfficesOperations/OfficesOperations";
+import { useParams } from "react-router-dom";
 
 interface Props<TValue> {
   columns: ColumnDef<Inventory, TValue>[];
@@ -38,6 +43,15 @@ function InventoriesTable<TValue>({
 }: Props<TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  const [employeesData, setEmployeesData] = useState<OfficesEmployee[]>([]);
+  const { id } = useParams();
+
+  useEffect(() => {
+    getOfficesEmployees(Number(id)).then(
+      (data) => data && setEmployeesData(data)
+    );
+  }, [id]);
 
   const table = useReactTable({
     data,
@@ -106,7 +120,10 @@ function InventoriesTable<TValue>({
                     </TableCell>
                   ))}
                   <TableCell className="flex items-center justify-between gap-2">
-                    <AssignedEmployeeBlock />
+                    <AssignedEmployeeBlock
+                      inventoryId={data[id]?.id}
+                      employeesData={employeesData}
+                    />
                     {/*Нажимаем на эту ерунду выскакивает окно с инвентарем */}
                     <PenLine color="#3B82F6" className="cursor-pointer" />
                     <Trash2

@@ -103,7 +103,7 @@ function EmployeesTable<TValue>({ columns, data, updateData }: Props<TValue>) {
                     </TableCell>
                   ))}
                   <TableCell className="flex items-center justify-between gap-2">
-                    <InventoriesForEmployeeBlock id={row.id} />
+                    <InventoriesForEmployeeBlock id={data[id]?.id} />
                     {/*Нажимаем на эту ерунду выскакивает окно с инвентарем */}
                     <PenLine color="#3B82F6" className="cursor-pointer" />
                     <Trash2

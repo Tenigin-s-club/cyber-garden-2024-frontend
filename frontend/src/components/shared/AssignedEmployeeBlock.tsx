@@ -4,28 +4,19 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { UserCog } from "lucide-react";
+import { Link, UserCog } from "lucide-react";
 import Title from "../ui/title";
 import { Input } from "../ui/input";
 import { ScrollArea } from "../ui/scroll-area";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { OfficesEmployee } from "@/services/OfficesOperations/OfficesOperations.type";
-import { getOfficesEmployees } from "@/services/OfficesOperations/OfficesOperations";
+import { attachInventory } from "@/services/BuildOperations/BuildOperations";
 
-export function AssignedEmployeeBlock() {
-  const [employeesData, setEmployeesData] = useState<OfficesEmployee[]>([]);
-  const { id } = useParams();
+interface Props {
+  inventoryId: number;
+  employeesData: OfficesEmployee[];
+}
 
-  const bindEmployee = (EmployeeId: string) => {
-    return EmployeeId; //а здесь мы запрашиваем функцию для связки с бэка
-  };
-
-  useEffect(() => {
-    getOfficesEmployees(Number(id)).then(
-      (data) => data && setEmployeesData(data)
-    );
-  }, []);
+export function AssignedEmployeeBlock({ inventoryId, employeesData }: Props) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -40,12 +31,14 @@ export function AssignedEmployeeBlock() {
             <Input />
             <ScrollArea className="h-[300px] w-full border-none mt-4 rounded-md border p-4">
               {employeesData.map((employee) => (
-                <p
-                  className="border-y py-3 cursor-pointer"
-                  onClick={() => bindEmployee(employee.id)}
-                >
-                  {employee.fio}
-                </p>
+                <div className="border-b flex items-center justify-between py-3">
+                  <p>{employee.fio}</p>
+                  <Link
+                    color="#16a34a"
+                    className="cursor-pointer"
+                    onClick={() => attachInventory(employee.id, [inventoryId])}
+                  />
+                </div>
               ))}
             </ScrollArea>
           </div>

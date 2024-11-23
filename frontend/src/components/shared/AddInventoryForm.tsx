@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
-import { DialogFooter } from "../ui/dialog";
 import { addInventory } from "@/services/BuildOperations/BuildOperations";
 import { useParams } from "react-router-dom";
 
@@ -61,11 +60,9 @@ const AddInventoryForm = ({ closeDialog }: Props) => {
             )}
           />
 
-          <DialogFooter className="sm:justify-start">
-            <Button type="submit" className="w-full mt-8">
-              Создать
-            </Button>
-          </DialogFooter>
+          <Button type="submit" className="w-full mt-8">
+            Создать
+          </Button>
         </form>
       </Form>
     </div>
