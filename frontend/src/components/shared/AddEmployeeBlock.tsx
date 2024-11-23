@@ -8,10 +8,15 @@ import {
 import { Plus } from "lucide-react";
 import AddEmployeeForm from "./AddEmployeeForm";
 import Title from "../ui/title";
+import { useState } from "react";
 
 export function AddEmployeeBlock() {
+  const [open, setOpen] = useState(false);
+  const closeDialog = () => {
+    setOpen(false);
+  };
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           <Plus />
@@ -22,7 +27,7 @@ export function AddEmployeeBlock() {
         <DialogHeader>
           <Title size="md" text="Сотрудник" />
         </DialogHeader>
-        <AddEmployeeForm />
+        <AddEmployeeForm closeDialog={closeDialog} />
       </DialogContent>
     </Dialog>
   );

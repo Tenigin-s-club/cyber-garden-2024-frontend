@@ -1,9 +1,27 @@
 import { urls } from "@/lib/constants/urls";
 import { showErrorNotification } from "@/lib/helpers/notification";
 import axios, { AxiosError } from "axios";
+import { OfficesUser } from "../OfficesOperations/OfficesOperations.type";
 const axiosInstance = axios.create({
   baseURL: urls.api,
 });
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    if (error.response.status === 401) {
+      axiosInstance.get("/users/refresh_token");
+    }
+    return error;
+  }
+);
+
 export const loginFetch = async (email: string, password: string) => {
   try {
     const res = await axiosInstance.post(
@@ -54,5 +72,17 @@ export const logout = async () => {
     return true;
   } catch (e) {
     console.log(e);
+  }
+};
+
+export const addOfficesEmployee = async (employee: OfficesUser) => {
+  try {
+    const res = await axiosInstance.post("/auth/employee", employee);
+
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    showErrorNotification(error.message);
+    return false;
   }
 };

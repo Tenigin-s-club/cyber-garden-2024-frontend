@@ -11,34 +11,30 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
-import { addOfficesInventories } from "@/services/OfficesOperations/OfficesOperations";
-import { DialogClose, DialogFooter } from "../ui/dialog";
+import { DialogFooter } from "../ui/dialog";
+import { addInventory } from "@/services/BuildOperations/BuildOperations";
 
 const addInventorySchema = z.object({
   name: z.string().min(3, {
     message: "название должно быть не короче 3х символов",
   }),
-  id: z.string().min(1, {
-    message: "Необходимо указать id",
-  }),
 });
 
-const AddInventoryForm = () => {
+interface Props {
+  closeDialog: () => void;
+}
+
+const AddInventoryForm = ({ closeDialog }: Props) => {
   const form = useForm<z.infer<typeof addInventorySchema>>({
     resolver: zodResolver(addInventorySchema),
     defaultValues: {
       name: "",
-      id: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof addInventorySchema>) {
-    const res = await addOfficesInventories({
-      name: values.name,
-      id: Number(values.id),
-    });
-    // if (res) navigate("/");
-    console.log(values);
+    const res = await addInventory(values.name);
+    if (res) closeDialog();
   }
   return (
     <div>
@@ -61,27 +57,11 @@ const AddInventoryForm = () => {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>ID</FormLabel>
-                <FormControl>
-                  <Input placeholder="id" {...field} />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           <DialogFooter className="sm:justify-start">
-            <DialogClose asChild>
-              <Button type="submit" className="w-full mt-8">
-                Создать
-              </Button>
-            </DialogClose>
+            <Button type="submit" className="w-full mt-8">
+              Создать
+            </Button>
           </DialogFooter>
         </form>
       </Form>

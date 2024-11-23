@@ -15,17 +15,26 @@ const MainPage = () => {
     <div>
       <div className="w-full flex items-center justify-between max-sm:block">
         <Title size="md" text="Главная" />
-        <div className="w-2/5 flex items-center gap-4 max-lg:w-3/5 max-sm:w-full max-sm:mt-4">
-          <Input />
-          <AddOfficeBlock />
-        </div>
+        {offices?.length && (
+          <div className="w-2/5 flex items-center gap-4 max-lg:w-3/5 max-sm:w-full max-sm:mt-4">
+            <Input />
+            <AddOfficeBlock />
+          </div>
+        )}
       </div>
 
-      <div className="mx-auto my-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {offices?.map((item) => (
-          <OfficeCard key={item.id} {...item} />
-        ))}
-      </div>
+      {offices?.length ? (
+        <div className="mx-auto my-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {offices?.map((item) => (
+            <OfficeCard key={item.id} {...item} />
+          ))}
+        </div>
+      ) : (
+        <div className="w-full flex items-center flex-col gap-8 mt-40">
+          <Title size="md" text={"У вас нет офисов"} />
+          <AddOfficeBlock />
+        </div>
+      )}
     </div>
   );
 };

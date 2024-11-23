@@ -8,10 +8,15 @@ import {
 import { Plus } from "lucide-react";
 import Title from "../ui/title";
 import AddInventoryForm from "./AddInventoryForm";
+import { useState } from "react";
 
 export function AddInventoryBlock() {
+  const [open, setOpen] = useState(false);
+  const closeDialog = () => {
+    setOpen(false);
+  };
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           <Plus />
@@ -22,7 +27,7 @@ export function AddInventoryBlock() {
         <DialogHeader>
           <Title size="md" text="Оборудование" />
         </DialogHeader>
-        <AddInventoryForm />
+        <AddInventoryForm closeDialog={closeDialog} />
       </DialogContent>
     </Dialog>
   );
