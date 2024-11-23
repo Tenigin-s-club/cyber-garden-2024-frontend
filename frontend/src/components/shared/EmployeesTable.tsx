@@ -20,18 +20,18 @@ import { useState } from "react";
 
 import { PenLine, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { AddEmployeeBlock } from "./AddEmployeeBlock";
 import InventoriesForEmployeeBlock from "./InventoriesForEmployeeBlock";
+import { deleteEmployee } from "@/services/AuthByEmail/AuthByEmail";
+import { OfficesEmployee } from "@/services/OfficesOperations/OfficesOperations.type";
+import { AddEmployeeBlock } from "./AddEmployeeBlock";
 
-interface Props<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface Props<TValue> {
+  columns: ColumnDef<OfficesEmployee, TValue>[];
+  data: OfficesEmployee[];
+  updateData: () => void;
 }
 
-function EmployeesTable<TData, TValue>({
-  columns,
-  data,
-}: Props<TData, TValue>) {
+function EmployeesTable<TValue>({ columns, data, updateData }: Props<TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -48,6 +48,12 @@ function EmployeesTable<TData, TValue>({
       columnFilters,
     },
   });
+
+  const deleteFunc = async (id: string) => {
+    await deleteEmployee(id);
+    updateData();
+  };
+
   return (
     <div>
       <div className="flex items-center py-4 justify-between gap-2">
@@ -59,7 +65,7 @@ function EmployeesTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <AddEmployeeBlock />
+        <AddEmployeeBlock updateData={updateData} />
       </div>
       <div className="rounded-md border">
         <Table>
@@ -83,7 +89,7 @@ function EmployeesTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, id) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
@@ -100,7 +106,11 @@ function EmployeesTable<TData, TValue>({
                     <InventoriesForEmployeeBlock id={row.id} />
                     {/*Нажимаем на эту ерунду выскакивает окно с инвентарем */}
                     <PenLine color="#3B82F6" className="cursor-pointer" />
-                    <Trash2 color="#DC2626" className="cursor-pointer" />
+                    <Trash2
+                      color="#DC2626"
+                      className="cursor-pointer"
+                      onClick={() => deleteFunc(data[id]?.id)}
+                    />
                   </TableCell>
                 </TableRow>
               ))

@@ -10,10 +10,15 @@ import AddEmployeeForm from "./AddEmployeeForm";
 import Title from "../ui/title";
 import { useState } from "react";
 
-export function AddEmployeeBlock() {
+interface Props {
+  updateData: () => void;
+}
+
+export function AddEmployeeBlock({ updateData }: Props) {
   const [open, setOpen] = useState(false);
   const closeDialog = () => {
     setOpen(false);
+    updateData();
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>

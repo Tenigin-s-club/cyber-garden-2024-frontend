@@ -12,6 +12,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import { addOfficesEmployee } from "@/services/AuthByEmail/AuthByEmail";
+import { useParams } from "react-router-dom";
 
 const addEmployeeSchema = z.object({
   fio: z.string().min(6, {
@@ -31,6 +32,7 @@ interface Props {
 }
 
 const AddEmployeeForm = ({ closeDialog }: Props) => {
+  const { id } = useParams();
   const form = useForm<z.infer<typeof addEmployeeSchema>>({
     resolver: zodResolver(addEmployeeSchema),
     defaultValues: {
@@ -42,7 +44,7 @@ const AddEmployeeForm = ({ closeDialog }: Props) => {
   });
 
   async function onSubmit(values: z.infer<typeof addEmployeeSchema>) {
-    const res = await addOfficesEmployee(values);
+    const res = await addOfficesEmployee({ ...values, office_id: id || "" });
     if (res) closeDialog();
   }
   return (

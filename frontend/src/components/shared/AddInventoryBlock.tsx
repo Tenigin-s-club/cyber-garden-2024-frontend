@@ -10,9 +10,14 @@ import Title from "../ui/title";
 import AddInventoryForm from "./AddInventoryForm";
 import { useState } from "react";
 
-export function AddInventoryBlock() {
+interface Props {
+  updateData: () => void;
+}
+
+export function AddInventoryBlock({ updateData }: Props) {
   const [open, setOpen] = useState(false);
   const closeDialog = () => {
+    updateData();
     setOpen(false);
   };
   return (

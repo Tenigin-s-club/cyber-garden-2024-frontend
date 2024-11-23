@@ -8,10 +8,20 @@ import {
 import { Plus } from "lucide-react";
 import Title from "../ui/title";
 import AddOfficeForm from "./AddOfficeForm";
+import { useState } from "react";
 
-export function AddOfficeBlock() {
+interface Props {
+  updateData: () => void;
+}
+
+export function AddOfficeBlock({ updateData }: Props) {
+  const [open, setOpen] = useState(false);
+  const closeDialog = () => {
+    setOpen(false);
+    updateData();
+  };
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           <Plus />
@@ -22,7 +32,7 @@ export function AddOfficeBlock() {
         <DialogHeader>
           <Title size="md" text="Оффис" />
         </DialogHeader>
-        <AddOfficeForm />
+        <AddOfficeForm closeDialog={closeDialog} updateData={updateData} />
       </DialogContent>
     </Dialog>
   );

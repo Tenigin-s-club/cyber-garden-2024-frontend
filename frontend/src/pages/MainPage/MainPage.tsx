@@ -4,13 +4,18 @@ import { Input } from "@/components/ui/input";
 import Title from "@/components/ui/title";
 import { getOffices } from "@/services/OfficesOperations/OfficesOperations";
 import { Office } from "@/services/OfficesOperations/OfficesOperations.type";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const MainPage = () => {
   const [offices, setOffices] = useState<Office[] | null>(null);
-  useEffect(() => {
+
+  const updateData = useCallback(async () => {
     getOffices().then((data) => data && setOffices(data));
   }, []);
+
+  useEffect(() => {
+    updateData();
+  }, [updateData]);
   return (
     <div>
       <div className="w-full flex items-center justify-between max-sm:block">
@@ -18,7 +23,7 @@ const MainPage = () => {
         {offices?.length && (
           <div className="w-2/5 flex items-center gap-4 max-lg:w-3/5 max-sm:w-full max-sm:mt-4">
             <Input />
-            <AddOfficeBlock />
+            <AddOfficeBlock updateData={updateData} />
           </div>
         )}
       </div>
@@ -32,7 +37,7 @@ const MainPage = () => {
       ) : (
         <div className="w-full flex items-center flex-col gap-8 mt-40">
           <Title size="md" text={"У вас нет офисов"} />
-          <AddOfficeBlock />
+          <AddOfficeBlock updateData={updateData} />
         </div>
       )}
     </div>

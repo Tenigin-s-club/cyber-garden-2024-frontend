@@ -12,7 +12,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import { addOffice } from "@/services/OfficesOperations/OfficesOperations";
-import { useNavigate } from "react-router-dom";
 
 const addOfficeForm = z.object({
   image: z.string().min(1, {
@@ -26,9 +25,12 @@ const addOfficeForm = z.object({
   }),
 });
 
-const AddOfficeForm = () => {
-  const navigate = useNavigate();
+interface Props {
+  updateData: () => void;
+  closeDialog: () => void;
+}
 
+const AddOfficeForm = ({ updateData, closeDialog }: Props) => {
   const form = useForm<z.infer<typeof addOfficeForm>>({
     resolver: zodResolver(addOfficeForm),
     defaultValues: {
@@ -38,7 +40,11 @@ const AddOfficeForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof addOfficeForm>) {
-    addOffice(values).then((res) => res && navigate(0));
+    const res = await addOffice(values);
+    if (res) {
+      closeDialog();
+      updateData();
+    }
   }
   return (
     <div>

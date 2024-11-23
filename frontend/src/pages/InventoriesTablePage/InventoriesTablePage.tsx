@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Inventory } from "@/services/OfficesOperations/OfficesOperations.type";
-import { useEffect, useState } from "react";
-import { getOfficesInventories } from "@/services/OfficesOperations/OfficesOperations";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import InventoriesTable from "@/components/shared/InventoriesTable";
+import { getInventories } from "@/services/BuildOperations/BuildOperations";
 
 export const columns: ColumnDef<Inventory>[] = [
   {
@@ -46,14 +46,21 @@ export const columns: ColumnDef<Inventory>[] = [
 const InventoriesTablePage = () => {
   const [inventoriesData, setInventoriesData] = useState<Inventory[]>([]);
   const { id } = useParams();
+
+  const updateData = useCallback(async () => {
+    getInventories(Number(id)).then((data) => data && setInventoriesData(data));
+  }, [id]);
+
   useEffect(() => {
-    getOfficesInventories(Number(id)).then(
-      (data) => data && setInventoriesData(data)
-    );
-  }, []);
+    updateData();
+  }, [updateData]);
   return (
     <Container>
-      <InventoriesTable columns={columns} data={inventoriesData} />
+      <InventoriesTable
+        updateData={updateData}
+        columns={columns}
+        data={inventoriesData}
+      />
     </Container>
   );
 };

@@ -14,6 +14,7 @@ export interface OfficesEmployee {
 }
 
 export interface OfficesUser {
+  office_id: string;
   fio: string;
   position: string;
   email: string;

@@ -22,16 +22,20 @@ import { PenLine, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { AddInventoryBlock } from "./AddInventoryBlock";
 import { AssignedEmployeeBlock } from "./AssignedEmployeeBlock";
+import { Inventory } from "@/services/OfficesOperations/OfficesOperations.type";
+import { deleteInventory } from "@/services/BuildOperations/BuildOperations";
 
-interface Props<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface Props<TValue> {
+  columns: ColumnDef<Inventory, TValue>[];
+  data: Inventory[];
+  updateData: () => void;
 }
 
-function InventoriesTable<TData, TValue>({
+function InventoriesTable<TValue>({
   columns,
   data,
-}: Props<TData, TValue>) {
+  updateData,
+}: Props<TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -48,6 +52,11 @@ function InventoriesTable<TData, TValue>({
       columnFilters,
     },
   });
+
+  const deleteFunc = async (id: number) => {
+    await deleteInventory(id);
+    updateData();
+  };
   return (
     <div>
       <div className="flex items-center py-4 justify-between gap-2">
@@ -59,7 +68,7 @@ function InventoriesTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <AddInventoryBlock />
+        <AddInventoryBlock updateData={updateData} />
       </div>
       <div className="rounded-md border">
         <Table>
@@ -83,7 +92,7 @@ function InventoriesTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, id) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
@@ -100,7 +109,11 @@ function InventoriesTable<TData, TValue>({
                     <AssignedEmployeeBlock />
                     {/*Нажимаем на эту ерунду выскакивает окно с инвентарем */}
                     <PenLine color="#3B82F6" className="cursor-pointer" />
-                    <Trash2 color="#DC2626" className="cursor-pointer" />
+                    <Trash2
+                      color="#DC2626"
+                      className="cursor-pointer"
+                      onClick={() => deleteFunc(data[id].id)}
+                    />
                   </TableCell>
                 </TableRow>
               ))

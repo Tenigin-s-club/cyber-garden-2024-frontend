@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import { DialogFooter } from "../ui/dialog";
 import { addInventory } from "@/services/BuildOperations/BuildOperations";
+import { useParams } from "react-router-dom";
 
 const addInventorySchema = z.object({
   name: z.string().min(3, {
@@ -25,6 +26,8 @@ interface Props {
 }
 
 const AddInventoryForm = ({ closeDialog }: Props) => {
+  const { id } = useParams();
+
   const form = useForm<z.infer<typeof addInventorySchema>>({
     resolver: zodResolver(addInventorySchema),
     defaultValues: {
@@ -33,7 +36,7 @@ const AddInventoryForm = ({ closeDialog }: Props) => {
   });
 
   async function onSubmit(values: z.infer<typeof addInventorySchema>) {
-    const res = await addInventory(values.name);
+    const res = await addInventory(values.name, id || "");
     if (res) closeDialog();
   }
   return (

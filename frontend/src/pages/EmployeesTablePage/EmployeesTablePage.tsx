@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { OfficesEmployee } from "@/services/OfficesOperations/OfficesOperations.type";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getOfficesEmployees } from "@/services/OfficesOperations/OfficesOperations";
 import { useParams } from "react-router-dom";
 
@@ -50,14 +50,23 @@ export const columns: ColumnDef<OfficesEmployee>[] = [
 const EmployeesTablePage = () => {
   const [employeesData, setEmployeesData] = useState<OfficesEmployee[]>([]);
   const { id } = useParams();
-  useEffect(() => {
+
+  const updateData = useCallback(async () => {
     getOfficesEmployees(Number(id)).then(
       (data) => data && setEmployeesData(data)
     );
-  }, []);
+  }, [id]);
+
+  useEffect(() => {
+    updateData();
+  }, [updateData]);
   return (
     <Container>
-      <EmployeesTable columns={columns} data={employeesData} />
+      <EmployeesTable
+        updateData={updateData}
+        columns={columns}
+        data={employeesData}
+      />
     </Container>
   );
 };
