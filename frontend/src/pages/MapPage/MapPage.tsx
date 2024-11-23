@@ -1,19 +1,16 @@
 import {
   DndContext,
   DragEndEvent,
-  DragOverlay,
   Over,
   UniqueIdentifier,
   useDraggable,
 } from "@dnd-kit/core";
-import { useMemo, useState } from "react";
-import { createSnapModifier } from "@dnd-kit/modifiers";
+import { useRef, useState } from "react";
 import { ClientRect, Coordinates, Translate } from "@dnd-kit/core/dist/types";
-import { Canvas } from "@/components/shared/Canvas";
 import { CELL_SIZE } from "@/lib/constants/size";
 import { AddingFurnite, MapSidebar } from "@/components/shared/MapSidebar";
-import { cn } from "@/lib/utils";
-import { itemColor } from "@/components/shared/SidebarItem";
+import { InfiniteCanvas } from "@/components/shared/InfiniteCanvas";
+
 export type Card = {
   id: UniqueIdentifier;
   coordinates: Coordinates;
@@ -32,14 +29,19 @@ const calculateCanvasPosition = (
   y:
     initialRect.top +
     delta.y -
-    (over?.rect?.top ?? 0 - ((over?.rect?.left ?? 0) % CELL_SIZE)),
+    (over?.rect?.top ?? 0 - ((over?.rect?.top ?? 0) % CELL_SIZE)),
 });
 
+<<<<<<< HEAD:frontend/src/pages/MapPage/MapPage.tsx
 const MapPage = () => {
   const [gridSize] = useState(CELL_SIZE);
+=======
+export const Map = () => {
+  const canvasRef = useRef<HTMLDivElement | null>(null);
+
+>>>>>>> 8a8a0cc (huesos):frontend/src/pages/MapPage.tsx
   const [activeItem, setActiveItem] = useState<null | AddingFurnite>(null);
-  const snapToGrid = useMemo(() => createSnapModifier(gridSize), [gridSize]);
-  const [firstData, setFirstData] = useState<AddingFurnite[]>([
+  const [startData, setStartData] = useState<AddingFurnite[]>([
     {
       id: 1,
       x: 0,
@@ -47,84 +49,10 @@ const MapPage = () => {
       size_y: 2,
       size_x: 1,
       name: "Кровать",
-    },
-    {
-      id: 2,
-      x: 0,
-      y: 0,
-      size_y: 1,
-      size_x: 1,
-      name: "табуретка",
-    },
-    {
-      id: 3,
-      x: 0,
-      y: 0,
-      size_y: 1,
-      size_x: 2,
-      name: "бильярдный стол",
-    },
-    {
-      id: 7,
-      x: 0,
-      y: 0,
-      size_y: 1,
-      size_x: 1,
-      name: "табуретка",
-    },
-    {
-      id: 8,
-      x: 0,
-      y: 0,
-      size_y: 1,
-      size_x: 2,
-      name: "бильярдный стол",
-    },
-    {
-      id: 9,
-      x: 0,
-      y: 0,
-      size_y: 1,
-      size_x: 1,
-      name: "табуретка",
-    },
-    {
-      id: 10,
-      x: 0,
-      y: 0,
-      size_y: 1,
-      size_x: 2,
-      name: "бильярдный стол",
-    },
-    {
-      id: 4,
-      x: 0,
-      y: 0,
-      size_y: 2,
-      size_x: 2,
-      name: "стол для покера",
-    },
-    {
-      id: 6,
-      x: 0,
-      y: 0,
-      size_y: 2,
-      size_x: 2,
-      name: "подиум для стриптизерши",
-    },
-    {
-      id: 5,
-      x: 0,
-      y: 0,
-      size_y: 5,
-      size_x: 2,
-      name: "хз, гроб",
+      floor_id: 0,
     },
   ]);
   const [mapItems, setMapItems] = useState<AddingFurnite[]>([]);
-  const { transform } = useDraggable({
-    id: activeItem?.id?.toString() ? activeItem?.id : 0,
-  });
 
   const addDraggedTrayCardToCanvas = ({
     over,
@@ -132,7 +60,17 @@ const MapPage = () => {
     delta,
   }: DragEndEvent) => {
     if (over?.id !== "canvas") return;
-    if (!active.rect.current.initial) return;
+    if (!active.rect.current.initial || !activeItem) return;
+    if (
+      activeItem.x + delta.x < 0 ||
+      activeItem.x + delta.x > (canvasRef.current?.clientWidth || 0) ||
+      activeItem.y + delta.y < 0 ||
+      activeItem.y + delta.y > (canvasRef.current?.clientHeight || 0)
+    ) {
+      setStartData((prev) => [...prev, { ...activeItem, x: 0, y: 0 }]);
+      return;
+    }
+
     if (
       mapItems.find(
         (card) =>
@@ -145,28 +83,7 @@ const MapPage = () => {
       )
     )
       return;
-    setFirstData((prev) => prev.filter((el) => el.id !== active.id));
-    console.log(
-      activeItem,
-      active.rect.current.initial,
-      firstData.find((el) => el.id === active.id),
-      !firstData.find((el) => el.id === active.id) &&
-        !active.rect.current.initial &&
-        !activeItem
-        ? mapItems
-        : [
-            ...mapItems,
-            {
-              ...activeItem,
-              ...calculateCanvasPosition(
-                active.rect.current.initial,
-                over,
-                delta
-              ),
-              id: Number(active.id),
-            },
-          ]
-    );
+    setStartData((prev) => prev.filter((el) => el.id !== active.id));
     setMapItems((prev) =>
       active.rect.current.initial && activeItem?.size_x
         ? [
@@ -187,52 +104,15 @@ const MapPage = () => {
 
   return (
     <>
-      <h1 className="text-4xl">КОНСТРУКТОР ПЕНИСОВ ОНЛАЙН</h1>
       <DndContext
         onDragStart={({ active }) => {
-          setActiveItem(firstData.find((el) => el.id === active.id) || null);
-          setFirstData((prev) => prev.filter((el) => el.id !== active.id));
+          setActiveItem(startData.find((el) => el.id === active.id) || null);
+          setStartData((prev) => prev.filter((el) => el.id !== active.id));
         }}
-        modifiers={[snapToGrid]}
         onDragEnd={addDraggedTrayCardToCanvas}
       >
-        <div className="flex-row flex">
-          <MapSidebar furnites={firstData} />
-          <Canvas
-            setFirstCards={setFirstData}
-            cards={mapItems}
-            setCards={setMapItems}
-          />
-          <DragOverlay dropAnimation={null}>
-            {(() => {
-              if (!activeItem) return;
-              return (
-                <div
-                  className={cn(
-                    "box-border rounded bg-bisque text-black cursor-grab text-center",
-                    itemColor[
-                      Number(activeItem?.id?.toString().split("_")[0]) %
-                        itemColor.length
-                    ]
-                  )}
-                  style={{
-                    width: CELL_SIZE * activeItem.size_x,
-                    height: CELL_SIZE * activeItem.size_y,
-                    ...(transform
-                      ? {
-                          // temporary change to this position when dragging
-                          transform: `translate3d(${transform.x}px, ${transform.y}px, 0px)`,
-                        }
-                      : {
-                          // zoom to canvas zoom
-                          transform: ``,
-                        }),
-                  }}
-                />
-              );
-            })()}
-          </DragOverlay>
-        </div>
+        <MapSidebar furnites={startData} />
+        <InfiniteCanvas />
       </DndContext>
     </>
   );

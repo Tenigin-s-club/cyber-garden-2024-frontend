@@ -1,19 +1,23 @@
 import { DragEndEvent } from "@dnd-kit/core/dist/types";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Draggable } from "./Draggable";
 import { createSnapModifier } from "@dnd-kit/modifiers";
 import { CELL_SIZE } from "@/lib/constants/size";
 import { AddingFurnite } from "./MapSidebar";
 import { cn } from "@/lib/utils";
 import { itemColor } from "./SidebarItem";
-import { useDroppable, DndContext, DragOverlay } from "@dnd-kit/core";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
 
 export const Canvas = ({
   cards,
   setCards,
   setFirstCards,
+  updateAndForwardRef,
+  canvasRef,
 }: {
   cards: AddingFurnite[];
+  canvasRef: React.MutableRefObject<HTMLDivElement | null>;
+  updateAndForwardRef: (div: HTMLDivElement) => void;
   setCards: React.Dispatch<React.SetStateAction<AddingFurnite[]>>;
   setFirstCards: React.Dispatch<React.SetStateAction<AddingFurnite[]>>;
 }) => {
@@ -36,6 +40,7 @@ export const Canvas = ({
       activeItem.y + delta.y < 0 ||
       activeItem.y + delta.y > (canvasRef.current?.clientHeight || 0)
     ) {
+      setFirstCards((prev) => [...prev, { ...activeItem, x: 0, y: 0 }]);
       return;
     }
     setCards((prev) => [
@@ -46,17 +51,6 @@ export const Canvas = ({
         y: activeItem.y + delta.y >= 0 ? activeItem.y + delta.y : activeItem.y,
       },
     ]);
-  };
-
-  const { setNodeRef } = useDroppable({
-    id: "canvas",
-  });
-
-  const canvasRef = useRef<HTMLDivElement | null>(null);
-
-  const updateAndForwardRef = (div: HTMLDivElement) => {
-    canvasRef.current = div;
-    setNodeRef(div);
   };
 
   return (
