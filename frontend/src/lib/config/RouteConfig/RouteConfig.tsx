@@ -1,19 +1,20 @@
 import Layout from "@/components/shared/layout";
 import { ProtectedRoute } from "@/components/shared/ProtectedRoute";
-import { AuthPage } from "@/pages/AuthPage";
-import MainPage from "@/pages/MainPage";
-import EmployeesTablePage from "@/pages/EmployeesTablePage";
 import LogoIcon from "@/assets/logo.svg";
 
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 import Container from "@/components/ui/container";
-import { Map } from "@/pages/MapPage";
-import InventoriesTablePage from "@/pages/InventoriesTablePage";
+import InventoriesTablePageAsync from "@/pages/InventoriesTablePage/InventoriesTablePage.async";
+import EmployeesTablePageAsync from "@/pages/EmployeesTablePage/EmployeesTablePage.async";
+import AuthPageAsync from "@/pages/AuthPage/AuthPage.async";
+import MainPageAsync from "@/pages/MainPage/MainPage.async";
+import MapPageAsync from "@/pages/MapPage/MapPage.async";
+import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 
 const authRoutes: RouteObject[] = [
   {
     path: "/login",
-    element: <AuthPage />,
+    element: <AuthPageAsync />,
   },
 ];
 
@@ -27,7 +28,7 @@ export const appRoutersConfig = createBrowserRouter([
           <div className="w-full flex pt-5">
             <LogoIcon />
           </div>
-          <MainPage />
+          <MainPageAsync />
         </Container>
       </ProtectedRoute>
     ),
@@ -35,11 +36,7 @@ export const appRoutersConfig = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    errorElement: (
-      <ProtectedRoute>
-        <div>Error</div>
-      </ProtectedRoute>
-    ),
+    errorElement: <ErrorPage />,
     children: [
       // {
       //   path: "/",
@@ -47,15 +44,15 @@ export const appRoutersConfig = createBrowserRouter([
       // },
       {
         path: "/employees/:id",
-        element: <EmployeesTablePage />,
+        element: <EmployeesTablePageAsync />,
       },
       {
         path: "/map/:id",
-        element: <Map />,
+        element: <MapPageAsync />,
       },
       {
         path: "/inventories/:id",
-        element: <InventoriesTablePage />,
+        element: <InventoriesTablePageAsync />,
       },
     ],
   },

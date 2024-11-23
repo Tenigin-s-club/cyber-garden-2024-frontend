@@ -38,7 +38,7 @@ const AddOfficeForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof addOfficeForm>) {
-    addOffice(values).then((res) => navigate(0));
+    addOffice(values).then((res) => res && navigate(0));
   }
   return (
     <div>

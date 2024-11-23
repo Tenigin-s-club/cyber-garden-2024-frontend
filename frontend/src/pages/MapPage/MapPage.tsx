@@ -35,7 +35,7 @@ const calculateCanvasPosition = (
     (over?.rect?.top ?? 0 - ((over?.rect?.left ?? 0) % CELL_SIZE)),
 });
 
-export const Map = () => {
+const MapPage = () => {
   const [gridSize] = useState(CELL_SIZE);
   const [activeItem, setActiveItem] = useState<null | AddingFurnite>(null);
   const snapToGrid = useMemo(() => createSnapModifier(gridSize), [gridSize]);
@@ -237,3 +237,5 @@ export const Map = () => {
     </>
   );
 };
+
+export default MapPage;
