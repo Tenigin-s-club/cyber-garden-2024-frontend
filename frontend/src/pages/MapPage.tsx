@@ -57,7 +57,7 @@ const trayCards = [
   { id: "Buzz58t", coordinates: { x: 0, y: 0 }, text: "Buzz" },
 ];
 
-export const Map = () => {
+export const MapPage = () => {
   const [gridSize] = useState(20);
   const snapToGrid = useMemo(() => createSnapModifier(gridSize), [gridSize]);
 

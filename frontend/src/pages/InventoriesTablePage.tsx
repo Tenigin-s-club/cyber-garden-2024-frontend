@@ -1,14 +1,32 @@
-import EmployeesTable from "@/components/shared/EmployeesTable";
 import Container from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
-import { OfficesEmployee } from "@/services/OfficesOperations/OfficesOperations.type";
+import { Inventory } from "@/services/OfficesOperations/OfficesOperations.type";
 import { useEffect, useState } from "react";
-import { getOfficesEmployees } from "@/services/OfficesOperations/OfficesOperations";
+import { getOfficesInventories } from "@/services/OfficesOperations/OfficesOperations";
 import { useParams } from "react-router-dom";
+import InventoriesTable from "@/components/shared/InventoriesTable";
 
-export const columns: ColumnDef<OfficesEmployee>[] = [
+export const columns: ColumnDef<Inventory>[] = [
+  {
+    accessorKey: "name",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Название
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "id",
+    header: "ID оборудования",
+  },
   {
     accessorKey: "fio",
     header: ({ column }) => {
@@ -17,29 +35,7 @@ export const columns: ColumnDef<OfficesEmployee>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          ФИО
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "position",
-    header: "Должность",
-  },
-  {
-    accessorKey: "place",
-    header: "Место",
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Почта
+          Сотрудник
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -47,19 +43,19 @@ export const columns: ColumnDef<OfficesEmployee>[] = [
   },
 ];
 
-const EmployeesTablePage = () => {
-  const [employeesData, setEmployeesData] = useState<OfficesEmployee[]>([]);
+const InventoriesTablePage = () => {
+  const [inventoriesData, setInventoriesData] = useState<Inventory[]>([]);
   const { id } = useParams();
   useEffect(() => {
-    getOfficesEmployees(Number(id)).then(
-      (data) => data && setEmployeesData(data)
+    getOfficesInventories(Number(id)).then(
+      (data) => data && setInventoriesData(data)
     );
   }, []);
   return (
     <Container>
-      <EmployeesTable columns={columns} data={employeesData} />
+      <InventoriesTable columns={columns} data={inventoriesData} />
     </Container>
   );
 };
 
-export default EmployeesTablePage;
+export default InventoriesTablePage;

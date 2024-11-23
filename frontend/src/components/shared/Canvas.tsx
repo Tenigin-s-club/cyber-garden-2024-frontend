@@ -1,4 +1,4 @@
-import { Card } from "@/pages/Map";
+import { Card } from "@/pages/MapPage";
 import { DndContext, useDroppable } from "@dnd-kit/core";
 import { DragEndEvent } from "@dnd-kit/core/dist/types";
 import { useMemo, useRef, useState } from "react";

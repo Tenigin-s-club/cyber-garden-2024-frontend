@@ -26,3 +26,9 @@ export interface Office {
   image: string;
   address: string;
 }
+
+export interface Inventory {
+  id: number;
+  name: string;
+  fio?: string;
+}

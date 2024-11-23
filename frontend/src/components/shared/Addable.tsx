@@ -1,4 +1,4 @@
-import { Card } from "@/pages/Map";
+import { Card } from "@/pages/MapPage";
 import { useDraggable } from "@dnd-kit/core";
 
 export const Addable = ({ card }: { card: Card }) => {

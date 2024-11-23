@@ -2,12 +2,13 @@ import Layout from "@/components/shared/layout";
 import { ProtectedRoute } from "@/components/shared/ProtectedRoute";
 import { AuthPage } from "@/pages/AuthPage";
 import MainPage from "@/pages/MainPage";
-import { Map } from "@/pages/Map";
 import EmployeesTablePage from "@/pages/EmployeesTablePage";
 import LogoIcon from "@/assets/logo.svg";
 
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 import Container from "@/components/ui/container";
+import { MapPage } from "@/pages/MapPage";
+import InventoriesTablePage from "@/pages/InventoriesTablePage";
 
 const authRoutes: RouteObject[] = [
   {
@@ -48,7 +49,11 @@ export const appRoutersConfig = createBrowserRouter([
       },
       {
         path: "/map/:id",
-        element: <Map />,
+        element: <MapPage />,
+      },
+      {
+        path: "/inventories/:id",
+        element: <InventoriesTablePage />,
       },
     ],
   },

@@ -18,17 +18,16 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 
-import { PenLine, Trash2 } from "lucide-react";
+import { PenLine, Trash2, UserCog } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { AddEmployeeBlock } from "./AddEmployeeBlock";
-import InventoriesForEmployeeBlock from "./InventoriesForEmployeeBlock";
+import { AddInventoryBlock } from "./AddInventoryBlock";
 
 interface Props<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-function EmployeesTable<TData, TValue>({
+function InventoriesTable<TData, TValue>({
   columns,
   data,
 }: Props<TData, TValue>) {
@@ -52,14 +51,14 @@ function EmployeesTable<TData, TValue>({
     <div>
       <div className="flex items-center py-4 justify-between gap-2">
         <Input
-          placeholder="Искать по ФИО..."
+          placeholder="Искать по Названию..."
           value={(table.getColumn("fio")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("fio")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
-        <AddEmployeeBlock />
+        <AddInventoryBlock />
       </div>
       <div className="rounded-md border">
         <Table>
@@ -97,7 +96,7 @@ function EmployeesTable<TData, TValue>({
                     </TableCell>
                   ))}
                   <TableCell className="flex items-center justify-between gap-2">
-                    <InventoriesForEmployeeBlock id={row.id} />
+                    <UserCog className="cursor-pointer" />
                     {/*Нажимаем на эту ерунду выскакивает окно с инвентарем */}
                     <PenLine color="#3B82F6" className="cursor-pointer" />
                     <Trash2 color="#DC2626" className="cursor-pointer" />
@@ -121,4 +120,4 @@ function EmployeesTable<TData, TValue>({
   );
 }
 
-export default EmployeesTable;
+export default InventoriesTable;
