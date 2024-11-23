@@ -81,7 +81,7 @@ export const addOfficesInventories = async (employee: Inventory) => {
 export const getEmployeeInventory = async (id: string) => {
   try {
     const res = await axiosInstance.get<Inventory[]>(
-      `/offices/employee/${id}/inventory`
+      `/offices/employees/${id}/inventory`
     );
     return res.data;
   } catch (e) {

@@ -4,6 +4,7 @@ import { getEmployeeInventory } from "@/services/OfficesOperations/OfficesOperat
 import { Inventory } from "@/services/OfficesOperations/OfficesOperations.type";
 import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface Props {
   id: string;
@@ -21,13 +22,15 @@ export function InventoriesForEmployeeTabs({ id }: Props) {
       </TabsList>
       <TabsContent value="assigned">
         <Input />
-        {inventories?.map((inventory) => (
-          <div>
-            <p>{inventory.name}</p>
-            <p>{inventory.id}</p>
-            <Trash2 color="#DC2626" className="cursor-pointer" />
-          </div>
-        ))}
+        <ScrollArea className="h-[300px] w-full border-none mt-4 rounded-md border p-4">
+          {inventories?.map((inventory) => (
+            <div className="flex items-center justify-between">
+              <p className="w-1/2">{inventory.name}</p>
+              <p className="w-1/5">{inventory.id}</p>
+              <Trash2 color="#DC2626" className="cursor-pointer" />
+            </div>
+          ))}
+        </ScrollArea>
       </TabsContent>
       <TabsContent value="free">
         <Input />

@@ -18,9 +18,10 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 
-import { PenLine, Trash2, UserCog } from "lucide-react";
+import { PenLine, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { AddInventoryBlock } from "./AddInventoryBlock";
+import { AssignedEmployeeBlock } from "./AssignedEmployeeBlock";
 
 interface Props<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -96,7 +97,7 @@ function InventoriesTable<TData, TValue>({
                     </TableCell>
                   ))}
                   <TableCell className="flex items-center justify-between gap-2">
-                    <UserCog className="cursor-pointer" />
+                    <AssignedEmployeeBlock />
                     {/*Нажимаем на эту ерунду выскакивает окно с инвентарем */}
                     <PenLine color="#3B82F6" className="cursor-pointer" />
                     <Trash2 color="#DC2626" className="cursor-pointer" />
