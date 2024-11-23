@@ -43,9 +43,20 @@ export const deleteOfficesEmployees = async (id: string) => {
   }
 };
 
-export const getOfficesOffices = async () => {
+export const getOffices = async () => {
   try {
     const res = await axiosInstance.get<Office[]>("/offices/offices");
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    showErrorNotification(error.message);
+    return false;
+  }
+};
+
+export const addOffice = async (office: Office) => {
+  try {
+    const res = await axiosInstance.post("/offices/office", office);
     return res.data;
   } catch (e) {
     const error = e as AxiosError;

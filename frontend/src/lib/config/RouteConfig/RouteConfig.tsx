@@ -22,12 +22,14 @@ export const appRoutersConfig = createBrowserRouter([
   {
     path: "/",
     element: (
-      <Container>
-        <div className="w-full flex pt-5">
-          <LogoIcon />
-        </div>
-        <MainPage />
-      </Container>
+      <ProtectedRoute>
+        <Container>
+          <div className="w-full flex pt-5">
+            <LogoIcon />
+          </div>
+          <MainPage />
+        </Container>
+      </ProtectedRoute>
     ),
   },
   {

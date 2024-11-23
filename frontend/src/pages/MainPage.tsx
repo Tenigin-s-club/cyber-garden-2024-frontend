@@ -1,16 +1,15 @@
+import { AddOfficeBlock } from "@/components/shared/AddOfficeBlock";
 import OfficeCard from "@/components/shared/OfficeCard";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Title from "@/components/ui/title";
-import { getOfficesOffices } from "@/services/OfficesOperations/OfficesOperations";
+import { getOffices } from "@/services/OfficesOperations/OfficesOperations";
 import { Office } from "@/services/OfficesOperations/OfficesOperations.type";
-import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const MainPage = () => {
   const [offices, setOffices] = useState<Office[] | null>(null);
   useEffect(() => {
-    getOfficesOffices().then((data) => data && setOffices(data));
+    getOffices().then((data) => data && setOffices(data));
   }, []);
   return (
     <div>
@@ -18,10 +17,7 @@ const MainPage = () => {
         <Title size="md" text="Главная" />
         <div className="w-2/5 flex items-center gap-4">
           <Input />
-          <Button>
-            <Plus />
-            Добавить офис
-          </Button>
+          <AddOfficeBlock />
         </div>
       </div>
 

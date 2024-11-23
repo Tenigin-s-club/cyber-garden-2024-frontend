@@ -21,9 +21,9 @@ export interface OfficesUser {
 }
 
 export interface Office {
-  id: number;
+  id?: number;
   name: string;
-  image: string;
+  image?: string;
   address: string;
 }
 

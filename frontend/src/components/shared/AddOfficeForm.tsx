@@ -11,34 +11,34 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
-import { addOfficesInventories } from "@/services/OfficesOperations/OfficesOperations";
-import { DialogClose, DialogFooter } from "../ui/dialog";
+import { addOffice } from "@/services/OfficesOperations/OfficesOperations";
+import { useNavigate } from "react-router-dom";
 
-const addInventorySchema = z.object({
+const addOfficeForm = z.object({
+  image: z.string().min(1, {
+    message: "Необходимо указать url картинки",
+  }),
   name: z.string().min(3, {
     message: "название должно быть не короче 3х символов",
   }),
-  id: z.string().min(1, {
-    message: "Необходимо указать id",
+  address: z.string().min(1, {
+    message: "Необходимо указать адресс",
   }),
 });
 
-const AddInventoryForm = () => {
-  const form = useForm<z.infer<typeof addInventorySchema>>({
-    resolver: zodResolver(addInventorySchema),
+const AddOfficeForm = () => {
+  const navigate = useNavigate();
+
+  const form = useForm<z.infer<typeof addOfficeForm>>({
+    resolver: zodResolver(addOfficeForm),
     defaultValues: {
       name: "",
-      id: "",
+      address: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof addInventorySchema>) {
-    const res = await addOfficesInventories({
-      name: values.name,
-      id: Number(values.id),
-    });
-    // if (res) navigate("/");
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof addOfficeForm>) {
+    addOffice(values).then((res) => navigate(0));
   }
   return (
     <div>
@@ -47,6 +47,19 @@ const AddInventoryForm = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-3"
         >
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Ссылка на изображение</FormLabel>
+                <FormControl>
+                  <Input placeholder="image" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="name"
@@ -63,12 +76,12 @@ const AddInventoryForm = () => {
           />
           <FormField
             control={form.control}
-            name="id"
+            name="address"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>ID</FormLabel>
+                <FormLabel>Адрес</FormLabel>
                 <FormControl>
-                  <Input placeholder="id" {...field} />
+                  <Input placeholder="address" {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -76,17 +89,13 @@ const AddInventoryForm = () => {
             )}
           />
 
-          <DialogFooter className="sm:justify-start">
-            <DialogClose asChild>
-              <Button type="submit" className="w-full mt-8">
-                Создать
-              </Button>
-            </DialogClose>
-          </DialogFooter>
+          <Button type="submit" className="w-full mt-8">
+            Создать
+          </Button>
         </form>
       </Form>
     </div>
   );
 };
 
-export default AddInventoryForm;
+export default AddOfficeForm;
