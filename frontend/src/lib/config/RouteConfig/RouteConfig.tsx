@@ -7,7 +7,7 @@ import LogoIcon from "@/assets/logo.svg";
 
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 import Container from "@/components/ui/container";
-import { MapPage } from "@/pages/MapPage";
+import { Map } from "@/pages/MapPage";
 import InventoriesTablePage from "@/pages/InventoriesTablePage";
 
 const authRoutes: RouteObject[] = [
@@ -49,7 +49,7 @@ export const appRoutersConfig = createBrowserRouter([
       },
       {
         path: "/map/:id",
-        element: <MapPage />,
+        element: <Map />,
       },
       {
         path: "/inventories/:id",

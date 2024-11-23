@@ -1,50 +1,51 @@
-import { Card } from "@/pages/MapPage";
-import { DndContext, useDroppable } from "@dnd-kit/core";
 import { DragEndEvent } from "@dnd-kit/core/dist/types";
 import { useMemo, useRef, useState } from "react";
 import { Draggable } from "./Draggable";
 import { createSnapModifier } from "@dnd-kit/modifiers";
+import { CELL_SIZE } from "@/lib/constants/size";
+import { AddingFurnite } from "./MapSidebar";
+import { cn } from "@/lib/utils";
+import { itemColor } from "./SidebarItem";
+import { useDroppable, DndContext, DragOverlay } from "@dnd-kit/core";
 
 export const Canvas = ({
   cards,
   setCards,
+  setFirstCards,
 }: {
-  cards: Card[];
-  setCards: (cards: Card[]) => void;
+  cards: AddingFurnite[];
+  setCards: React.Dispatch<React.SetStateAction<AddingFurnite[]>>;
+  setFirstCards: React.Dispatch<React.SetStateAction<AddingFurnite[]>>;
 }) => {
-  const [gridSize] = useState(20);
+  const [gridSize] = useState(CELL_SIZE);
   const snapToGrid = useMemo(() => createSnapModifier(gridSize), [gridSize]);
+  const [activeItem, setActiveItem] = useState<null | AddingFurnite>(null);
 
-  const updateDraggedCardPosition = ({ delta, active }: DragEndEvent) => {
-    if (!delta.x && !delta.y) return;
-
-    setCards(
-      cards.map((card) => {
-        if (
-          card.id === active.id &&
-          !cards.find(
-            (cardWas) =>
-              card.coordinates.x === cardWas.coordinates.x &&
-              card.coordinates.y === cardWas.coordinates.y
-          )
-        ) {
-          return {
-            ...card,
-            coordinates: {
-              x:
-                card.coordinates.x + delta.x >= 0
-                  ? card.coordinates.x + delta.x
-                  : card.coordinates.x,
-              y:
-                card.coordinates.y + delta.y >= 0
-                  ? card.coordinates.y + delta.y
-                  : card.coordinates.y,
-            },
-          };
-        }
-        return card;
-      })
+  const updateDraggedCardPosition = ({ delta }: DragEndEvent) => {
+    console.log(delta, activeItem);
+    if ((!delta.x && !delta.y) || !activeItem) return;
+    console.log(
+      activeItem.x + delta.x,
+      activeItem.y + delta.y,
+      canvasRef.current?.clientWidth || 0,
+      canvasRef.current?.clientHeight || 0
     );
+    if (
+      activeItem.x + delta.x < 0 ||
+      activeItem.x + delta.x > (canvasRef.current?.clientWidth || 0) ||
+      activeItem.y + delta.y < 0 ||
+      activeItem.y + delta.y > (canvasRef.current?.clientHeight || 0)
+    ) {
+      return;
+    }
+    setCards((prev) => [
+      ...prev,
+      {
+        ...activeItem,
+        x: activeItem.x + delta.x >= 0 ? activeItem.x + delta.x : activeItem.x,
+        y: activeItem.y + delta.y >= 0 ? activeItem.y + delta.y : activeItem.y,
+      },
+    ]);
   };
 
   const { setNodeRef } = useDroppable({
@@ -58,28 +59,47 @@ export const Canvas = ({
     setNodeRef(div);
   };
 
-  // create the d3 zoom object, and useMemo to retain it for rerenders
-
-  // update the transform when d3 zoom notifies of a change
-
   return (
     <div
       ref={updateAndForwardRef}
-      className="overflow-hidden rounded border border-chocolate bg-snow"
+      className="overflow-hidden rounded border border-chocolate bg-snow w-full"
     >
       <div
         className="canvas"
         style={{
-          // apply the transform from d3
           transformOrigin: "top left",
           position: "relative",
           height: "300px",
         }}
       >
         <DndContext
+          onDragStart={({ active }) => {
+            setActiveItem(cards.find((el) => el.id === active.id) || null);
+            setCards((prev) => prev.filter((el) => el.id !== active.id));
+          }}
           modifiers={[snapToGrid]}
           onDragEnd={updateDraggedCardPosition}
         >
+          <DragOverlay dropAnimation={null}>
+            {(() => {
+              if (!activeItem) return;
+              return (
+                <div
+                  className={cn(
+                    "box-border rounded bg-bisque text-black cursor-grab text-center",
+                    itemColor[
+                      Number(activeItem?.id?.toString().split("_")[0]) %
+                        itemColor.length
+                    ]
+                  )}
+                  style={{
+                    width: CELL_SIZE * activeItem.size_x,
+                    height: CELL_SIZE * activeItem.size_y,
+                  }}
+                />
+              );
+            })()}
+          </DragOverlay>
           {cards.map((card) => (
             <Draggable card={card} key={card.id} />
           ))}
