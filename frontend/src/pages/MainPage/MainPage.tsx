@@ -13,9 +13,9 @@ const MainPage = () => {
   }, []);
   return (
     <div>
-      <div className="w-full flex items-center justify-between">
+      <div className="w-full flex items-center justify-between max-sm:block">
         <Title size="md" text="Главная" />
-        <div className="w-2/5 flex items-center gap-4">
+        <div className="w-2/5 flex items-center gap-4 max-lg:w-3/5 max-sm:w-full max-sm:mt-4">
           <Input />
           <AddOfficeBlock />
         </div>

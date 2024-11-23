@@ -12,8 +12,12 @@ const OfficeCard = ({ id, name, image, address }: Office) => {
           className="w-full h-48 object-cover object-center transition duration-300 ease-in-out"
         />
         <CardContent className="mt-4">
-          <CardTitle className="text-xl font-semibold ">{name}</CardTitle>
-          <CardDescription className="text-gray-700">{address}</CardDescription>
+          <CardTitle className="text-xl font-semibold truncate">
+            {name}
+          </CardTitle>
+          <CardDescription className="text-gray-700 truncate">
+            {address}
+          </CardDescription>
         </CardContent>
       </Card>
     </Link>
