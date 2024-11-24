@@ -27,7 +27,7 @@ export function AddFurnitureBlock({ updateData }: Props) {
   };
 
   const onSubmitFunc = async (values: Omit<Furniture, "id">) => {
-    return addFurniture(values);
+    return addFurniture({ ...values, office_id: Number(id) || 0 });
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>

@@ -39,4 +39,5 @@ export interface Furniture {
   id: number;
   size_x: number;
   size_y: number;
+  office_id: number;
 }
