@@ -33,3 +33,10 @@ export interface Inventory {
   name: string;
   fio: string | null;
 }
+
+export interface Furniture {
+  name: string;
+  id: number;
+  size_x: number;
+  size_y: number;
+}

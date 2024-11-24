@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { itemColor, SidebarItem } from "./SidebarItem";
+import { AddFurnitureBlock } from "./AddFurnitureBlock";
 
 export type AddingFurnite = {
   x: number;
@@ -16,6 +17,7 @@ interface MapSidebarProps {
 }
 
 export const MapSidebar: FC<MapSidebarProps> = ({ furnites }) => {
+  const updateData = () => {};
   return (
     <div
       className="h-5/6 flex border border-gray-200 z-10 bg-white flex-col gap-4 w-1/6 absolute m-4 rounded-xl top-20 right-0"
@@ -36,6 +38,7 @@ export const MapSidebar: FC<MapSidebarProps> = ({ furnites }) => {
             <span className="text-sm caret-slate-800">{name}</span>
           </div>
         ))}
+        <AddFurnitureBlock updateData={updateData} />
       </div>
     </div>
   );

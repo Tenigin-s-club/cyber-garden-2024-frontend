@@ -1,7 +1,10 @@
 import axiosInstance from "@/lib/config/ApiConfig/ApiConfig";
 import { showErrorNotification } from "@/lib/helpers/notification";
 import { AxiosError } from "axios";
-import { Inventory } from "../OfficesOperations/OfficesOperations.type";
+import {
+  Furniture,
+  Inventory,
+} from "../OfficesOperations/OfficesOperations.type";
 
 export const addInventory = async (name: string, office_id: string) => {
   try {
@@ -126,6 +129,19 @@ export const deleteAttachInventory = async (inventory_id: number) => {
     const res = await axiosInstance.delete(
       `/build/attach/inventory/employee/${inventory_id}`
     );
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    showErrorNotification(error.message);
+    return false;
+  }
+};
+
+export const addFurniture = async (furniture: Omit<Furniture, "id">) => {
+  try {
+    const res = await axiosInstance.post("/build/furniture", {
+      ...furniture,
+    });
     return res.data;
   } catch (e) {
     const error = e as AxiosError;
