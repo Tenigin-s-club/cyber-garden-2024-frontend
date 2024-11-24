@@ -43,7 +43,7 @@ export const getInventories = async (id: number) => {
 export const getFreeInventories = async (id: number) => {
   try {
     const res = await axiosInstance.get<Inventory[]>(
-      `/build/inventory/${id}/?status=free`
+      `/build/inventory/${id}?status=free`
     );
     return res.data;
   } catch (e) {
