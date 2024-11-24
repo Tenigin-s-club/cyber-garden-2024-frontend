@@ -33,6 +33,7 @@ export const loginFetch = async (email: string, password: string) => {
       { headers: { "Content-Type": "application/json" } }
     );
     localStorage.setItem("access_token", res.data["token"]);
+    localStorage.setItem("role", res.data.role);
     return res.data["token"];
   } catch (e) {
     const error = e as AxiosError;

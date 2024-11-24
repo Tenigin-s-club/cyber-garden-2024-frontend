@@ -18,13 +18,14 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 
-import { Trash2 } from "lucide-react";
+import { MonitorCog, PenLine, Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import InventoriesForEmployeeBlock from "./InventoriesForEmployeeBlock";
 import { deleteEmployee } from "@/services/AuthByEmail/AuthByEmail";
 import { OfficesEmployee } from "@/services/OfficesOperations/OfficesOperations.type";
 import { AddEmployeeBlock } from "./AddEmployeeBlock";
 import { EditEmployeeBlock } from "./EditEmployeeBlock";
+import { Button } from "../ui/button";
 
 interface Props<TValue> {
   columns: ColumnDef<OfficesEmployee, TValue>[];
@@ -66,7 +67,14 @@ function EmployeesTable<TValue>({ columns, data, updateData }: Props<TValue>) {
           }
           className="max-w-sm"
         />
-        <AddEmployeeBlock updateData={updateData} />
+        {localStorage.getItem("role") === "admit" ? (
+          <AddEmployeeBlock updateData={updateData} />
+        ) : (
+          <Button disabled>
+            <Plus />
+            Добавить сотрудника
+          </Button>
+        )}
       </div>
       <div className="rounded-md border">
         <Table>
@@ -103,19 +111,28 @@ function EmployeesTable<TValue>({ columns, data, updateData }: Props<TValue>) {
                       )}
                     </TableCell>
                   ))}
-                  <TableCell className="flex items-center justify-between gap-2">
-                    <InventoriesForEmployeeBlock id={data[id]?.id} />
-                    <EditEmployeeBlock
-                      employeeId={data[id]?.id}
-                      employee={data[id]}
-                      updateData={updateData}
-                    />
-                    <Trash2
-                      color="#DC2626"
-                      className="cursor-pointer"
-                      onClick={() => deleteFunc(data[id]?.id)}
-                    />
-                  </TableCell>
+
+                  {localStorage.getItem("role") === "admit" ? (
+                    <TableCell className="flex items-center justify-between gap-2">
+                      <InventoriesForEmployeeBlock id={data[id]?.id} />
+                      <EditEmployeeBlock
+                        employeeId={data[id]?.id}
+                        employee={data[id]}
+                        updateData={updateData}
+                      />
+                      <Trash2
+                        color="#DC2626"
+                        className="cursor-pointer"
+                        onClick={() => deleteFunc(data[id]?.id)}
+                      />
+                    </TableCell>
+                  ) : (
+                    <TableCell className="opacity-40 flex items-center justify-between gap-2">
+                      <MonitorCog />
+                      <PenLine color="#3B82F6" />
+                      <Trash2 color="#DC2626" />
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             ) : (

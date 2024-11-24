@@ -4,15 +4,15 @@ import LogoIcon from "@/assets/logo.svg";
 
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 import Container from "@/components/ui/container";
-// import InventoriesTablePageAsync from "@/pages/InventoriesTablePage/InventoriesTablePage.async";
-// import EmployeesTablePageAsync from "@/pages/EmployeesTablePage/EmployeesTablePage.async";
 import AuthPageAsync from "@/pages/AuthPage/AuthPage.async";
 import MainPageAsync from "@/pages/MainPage/MainPage.async";
 import MapPageAsync from "@/pages/MapPage/MapPage.async";
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
-import EmployeesTablePage from "@/pages/EmployeesTablePage/EmployeesTablePage";
-import InventoriesTablePage from "@/pages/InventoriesTablePage/InventoriesTablePage";
+// import EmployeesTablePage from "@/pages/EmployeesTablePage/EmployeesTablePage";
+// import InventoriesTablePage from "@/pages/InventoriesTablePage/InventoriesTablePage";
 import MainPage from "@/pages/MainPage/MainPage";
+import EmployeesTablePageAsync from "@/pages/EmployeesTablePage/EmployeesTablePage.async";
+import InventoriesTablePageAsync from "@/pages/InventoriesTablePage/InventoriesTablePage.async";
 
 const authRoutes: RouteObject[] = [
   {
@@ -47,7 +47,7 @@ export const appRoutersConfig = createBrowserRouter([
       },
       {
         path: "/employees/:id",
-        element: <EmployeesTablePage />,
+        element: <EmployeesTablePageAsync />,
       },
       {
         path: "/map/:id",
@@ -55,7 +55,7 @@ export const appRoutersConfig = createBrowserRouter([
       },
       {
         path: "/inventories/:id",
-        element: <InventoriesTablePage />,
+        element: <InventoriesTablePageAsync />,
       },
     ],
   },

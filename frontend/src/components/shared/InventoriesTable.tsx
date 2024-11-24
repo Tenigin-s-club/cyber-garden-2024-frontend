@@ -18,7 +18,7 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
-import { Trash2 } from "lucide-react";
+import { PenLine, Plus, Trash2, UserCog } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { AddInventoryBlock } from "./AddInventoryBlock";
 import { AssignedEmployeeBlock } from "./AssignedEmployeeBlock";
@@ -34,6 +34,7 @@ import {
 import { getOfficesEmployees } from "@/services/OfficesOperations/OfficesOperations";
 import { useParams } from "react-router-dom";
 import { EditInventoryBlock } from "./EditInventoryBlock";
+import { Button } from "../ui/button";
 
 interface Props<TValue> {
   columns: ColumnDef<Inventory, TValue>[];
@@ -97,7 +98,14 @@ function InventoriesTable<TValue>({
           }
           className="max-w-sm"
         />
-        <AddInventoryBlock updateData={updateData} />
+        {localStorage.getItem("role") === "admit" ? (
+          <AddInventoryBlock updateData={updateData} />
+        ) : (
+          <Button disabled>
+            <Plus />
+            Добавить инвентарь
+          </Button>
+        )}
       </div>
       <div className="rounded-md border">
         <Table>
@@ -134,23 +142,31 @@ function InventoriesTable<TValue>({
                       )}
                     </TableCell>
                   ))}
-                  <TableCell className="flex items-center justify-between gap-2">
-                    <AssignedEmployeeBlock
-                      attachedUser={attachedUser}
-                      inventory={data[id]}
-                      employeesData={employeesData}
-                      deleteAttachedUser={deleteAttachedUser}
-                    />
-                    <EditInventoryBlock
-                      deFaultInventory={data[id]}
-                      updateData={updateData}
-                    />
-                    <Trash2
-                      color="#DC2626"
-                      className="cursor-pointer"
-                      onClick={() => deleteFunc(data[id].id)}
-                    />
-                  </TableCell>
+                  {localStorage.getItem("role") === "admit" ? (
+                    <TableCell className="flex items-center justify-between gap-2">
+                      <AssignedEmployeeBlock
+                        attachedUser={attachedUser}
+                        inventory={data[id]}
+                        employeesData={employeesData}
+                        deleteAttachedUser={deleteAttachedUser}
+                      />
+                      <EditInventoryBlock
+                        deFaultInventory={data[id]}
+                        updateData={updateData}
+                      />
+                      <Trash2
+                        color="#DC2626"
+                        className="cursor-pointer"
+                        onClick={() => deleteFunc(data[id].id)}
+                      />
+                    </TableCell>
+                  ) : (
+                    <TableCell className="opacity-40 flex items-center justify-between gap-2">
+                      <UserCog />
+                      <PenLine color="#3B82F6" />
+                      <Trash2 color="#DC2626" />
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             ) : (
