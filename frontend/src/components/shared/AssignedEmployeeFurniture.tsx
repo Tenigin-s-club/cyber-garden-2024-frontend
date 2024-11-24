@@ -4,7 +4,7 @@ import Title from "../ui/title";
 import { Input } from "../ui/input";
 import { ScrollArea } from "../ui/scroll-area";
 import {
-  Inventory,
+  Furniture,
   OfficesEmployee,
 } from "@/services/OfficesOperations/OfficesOperations.type";
 import { useCallback, useEffect, useState } from "react";
@@ -16,14 +16,14 @@ import {
 } from "@/services/BuildOperations/BuildOperations";
 
 interface Props {
-  inventory: Inventory;
+  furniture: Furniture;
   //   employeesData: OfficesEmployee[];
-  //   attachedUser: (id: string, inventoryId: number) => void;
-  //   deleteAttachedUser: (inventoryId: number) => void;
+  //   attachedUser: (id: string, furnitureId: number) => void;
+  //   deleteAttachedUser: (furnitureId: number) => void;
 }
 
 export function AssignedEmployeeFurniture({
-  inventory,
+  furniture,
 }: //   employeesData,
 //   attachedUser,
 //   deleteAttachedUser,
@@ -47,24 +47,24 @@ Props) {
   }, [updateData]);
 
   const toggleAttachedUser = async (id: string) => {
-    if (inventory.fio) {
-      await deleteAttachFurniture(inventory.id);
-      attachFurniture(id, [inventory.id]);
+    if (furniture.fio) {
+      await deleteAttachFurniture(furniture.id);
+      attachFurniture(id, [furniture.id]);
     } else {
-      attachFurniture(id, [inventory.id]);
+      attachFurniture(id, [furniture.id]);
     }
   };
   return (
     <DialogContent className="sm:max-w-[425px]">
       <Title size="sm" text="Назначено сотруднику:" />
       <div className="border-y py-3 flex items-center justify-between">
-        {inventory.fio ? (
+        {furniture.fio ? (
           <>
-            <p>{inventory.fio}</p>
+            <p>{furniture.fio}</p>
             <Unlink
               color="#DC2626"
               className="cursor-pointer"
-              //   onClick={() => deleteAttachedUser(inventory.id)}
+              //   onClick={() => deleteAttachedUser(furniture.id)}
             />
           </>
         ) : (

@@ -40,4 +40,5 @@ export interface Furniture {
   size_x: number;
   size_y: number;
   office_id: number;
+  fio: string;
 }

@@ -149,3 +149,14 @@ export const addFurniture = async (furniture: Omit<Furniture, "id">) => {
     return false;
   }
 };
+
+export const getFurniture = async (id: number) => {
+  try {
+    const res = await axiosInstance.get<Furniture[]>(`/build/furniture/${id}`);
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    showErrorNotification(error.message);
+    return false;
+  }
+};

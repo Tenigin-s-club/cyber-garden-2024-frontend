@@ -11,7 +11,8 @@ export const requestMapByFloor = async (
   office_id: string | number,
   floor_id: string | number
 ) => {
-  return await axiosInstance.get(`/offices/map/${office_id}/${floor_id}`);
+  return (await axiosInstance.get(`/offices/map/${office_id}/${floor_id}`))
+    .data;
 };
 
 export const requestCreateFloors = async (data: {

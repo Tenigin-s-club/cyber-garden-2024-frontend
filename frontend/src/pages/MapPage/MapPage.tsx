@@ -1,308 +1,140 @@
-import { ReactInfiniteCanvasHandle } from "react-infinite-canvas";
 import {
+  ClientRect,
   DndContext,
-  DragEndEvent,
   DragOverlay,
   Over,
   UniqueIdentifier,
-  useDraggable,
 } from "@dnd-kit/core";
-import { useEffect, useRef, useState } from "react";
-import { ClientRect, Coordinates, Translate } from "@dnd-kit/core/dist/types";
-import { CELL_SIZE } from "@/lib/constants/size";
-import { AddingFurnite, MapSidebar } from "@/components/shared/MapSidebar";
-import { InfiniteCanvas } from "@/components/shared/InfiniteCanvas";
-import { itemColor } from "@/components/shared/SidebarItem";
-import { cn } from "@/lib/utils";
-import { snapCenterToCursor } from "@dnd-kit/modifiers";
-import Container from "@/components/ui/container";
-import { requestFloors, requestFurniture } from "@/services/Map/map";
+import { Coordinates, DragEndEvent, Translate } from "@dnd-kit/core/dist/types";
+import { ZoomTransform, zoomIdentity } from "d3-zoom";
+import { useEffect, useState } from "react";
+import { Addable } from "./Addable";
+import "./App.css";
+import { Canvas } from "./Canvas";
 import { useParams } from "react-router-dom";
+import { getFurniture } from "@/services/BuildOperations/BuildOperations";
+import { AddFurnitureBlock } from "@/components/shared/AddFurnitureBlock";
 
 export type Card = {
   id: UniqueIdentifier;
+  fio: string;
   coordinates: Coordinates;
-  text: string;
+  name: string;
+  size_x: number;
+  size_y: number;
 };
 
 const calculateCanvasPosition = (
   initialRect: ClientRect,
   over: Over,
-  delta: Translate
+  delta: Translate,
+  transform: ZoomTransform
 ): Coordinates => ({
   x:
-    initialRect.left +
-    delta.x -
-    (over?.rect?.left ?? 0 - ((over?.rect?.left ?? 0) % CELL_SIZE)),
+    (initialRect.left + delta.x - (over?.rect?.left ?? 0) - transform.x) /
+    transform.k,
   y:
-    initialRect.top +
-    delta.y -
-    (over?.rect?.top ?? 0 - ((over?.rect?.top ?? 0) % CELL_SIZE)),
+    (initialRect.top + delta.y - (over?.rect?.top ?? 0) - transform.y) /
+    transform.k,
 });
 
-const Map = () => {
-  const canvasRef = useRef<ReactInfiniteCanvasHandle>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [mapItems, setMapItems] = useState<
-    { office_id: number; name: string; id: number; items: AddingFurnite[] }[]
-  >([]);
-  const [startItems, setStartItems] = useState<
-    {
-      name: string;
-      size_x: number;
-      size_y: number;
-      id: number;
-    }[]
-  >([]);
-  const { id = "" } = useParams();
-  useEffect(() => {
-    setIsLoading(true);
-    (async () => {
-      const floorsRes = await requestFloors(id);
-      setMapItems(
-        floorsRes.data.map(
-          (el: { office_id: number; name: string; id: number }) => ({
-            ...el,
-            items: [],
-          })
-        )
-      );
-      const furnRes = await requestFurniture(id);
-      setStartItems(
-        furnRes.data.map(
-          (el: { name: string; size_x: number; size_y: number; id: number }) =>
-            el
-        )
-      );
-    })();
-    setIsLoading(false);
-  }, [id]);
-  const [activeItem, setActiveItem] = useState<null | AddingFurnite>(null);
+const MapPage = () => {
+  const { id } = useParams();
+  const [cards, setCards] = useState<Card[]>([]);
+  const [tracedCards, setTracedCards] = useState<Card[]>([]);
+
+  const [draggedTrayCardId, setDraggedTrayCardId] =
+    useState<UniqueIdentifier>("");
+  console.log(draggedTrayCardId);
+
+  // store the current transform from d3
+  const [transform, setTransform] = useState(zoomIdentity);
 
   const addDraggedTrayCardToCanvas = ({
     over,
     active,
     delta,
   }: DragEndEvent) => {
-    setActiveItem(null);
-    if (!over?.id.toString().includes("canvas")) {
-      return;
-    }
+    setDraggedTrayCardId("");
 
-    if (
-      !active ||
-      !active.rect ||
-      !active.rect.current ||
-      !active.rect.current.initial ||
-      !activeItem
-    )
-      return;
-    console.log(
-      mapItems
-        .find((el) => el.id === Number(over.id.toString().split("_").at(-1)))
-        ?.items.find(
-          (card) =>
-            active.rect.current.initial &&
-            card.x ===
-              calculateCanvasPosition(active.rect.current.initial, over, delta)
-                .x &&
-            card.y ===
-              calculateCanvasPosition(active.rect.current.initial, over, delta)
-                .y
-        )
-    );
-    if (
-      mapItems
-        .find((el) => el.id === Number(over.id.toString().split("_").at(-1)))
-        ?.items.find(
-          (card) =>
-            active.rect.current.initial &&
-            card.x ===
-              calculateCanvasPosition(active.rect.current.initial, over, delta)
-                .x &&
-            card.y ===
-              calculateCanvasPosition(active.rect.current.initial, over, delta)
-                .y
-        )
-    ) {
-      return;
-    }
-    console.log(
-      over.id.toString().split("_"),
-      [
-        ...mapItems.filter(
-          (el) => el.id !== Number(over.id.toString().split("_").at(-1))
+    if (over?.id !== "canvas") return;
+    if (!active.rect.current.initial) return;
+
+    setCards([
+      ...cards,
+      {
+        id: active.id,
+        coordinates: calculateCanvasPosition(
+          active.rect.current.initial,
+          over,
+          delta,
+          transform
         ),
-        {
-          ...mapItems[
-            mapItems.findIndex(
-              (el) => el.id === Number(over.id.toString().split("_").at(-1))
-            )
-          ],
-          items: [
-            ...(mapItems[
-              mapItems.findIndex(
-                (el) => el.id === Number(over.id.toString().split("_").at(-1))
-              )
-            ]?.items ?? []),
-            {
-              ...activeItem,
-              office_id: Number(id),
-              items: [],
-              x:
-                calculateCanvasPosition(
-                  active.rect.current.initial!,
-                  over,
-                  delta
-                ).x -
-                (calculateCanvasPosition(
-                  active.rect.current.initial!,
-                  over,
-                  delta
-                ).x %
-                  CELL_SIZE),
-              y:
-                calculateCanvasPosition(
-                  active.rect.current.initial!,
-                  over,
-                  delta
-                ).y -
-                (calculateCanvasPosition(
-                  active.rect.current.initial!,
-                  over,
-                  delta
-                ).y %
-                  CELL_SIZE),
-            },
-          ],
-        },
-      ].sort((a, b) => a.id - b.id)
-    );
-    setMapItems((prev) =>
-      [
-        ...prev.filter(
-          (el) => el.id !== Number(over.id.toString().split("_").at(-1))
-        ),
-        {
-          ...prev[
-            prev.findIndex(
-              (el) => el.id === Number(over.id.toString().split("_").at(-1))
-            )
-          ],
-          items: [
-            ...(prev[
-              prev.findIndex(
-                (el) => el.id === Number(over.id.toString().split("_").at(-1))
-              )
-            ]?.items ?? []),
-            {
-              ...activeItem,
-              office_id: Number(id),
-              items: [],
-              x:
-                calculateCanvasPosition(
-                  active.rect.current.initial!,
-                  over,
-                  delta
-                ).x -
-                (calculateCanvasPosition(
-                  active.rect.current.initial!,
-                  over,
-                  delta
-                ).x %
-                  CELL_SIZE),
-              y:
-                calculateCanvasPosition(
-                  active.rect.current.initial!,
-                  over,
-                  delta
-                ).y -
-                (calculateCanvasPosition(
-                  active.rect.current.initial!,
-                  over,
-                  delta
-                ).y %
-                  CELL_SIZE),
-            },
-          ],
-        },
-      ].sort((a, b) => a.id - b.id)
-    );
+        name: active.id.toString(),
+        fio: active.id.toString(),
+        size_x: tracedCards.filter(({ id }) => id == draggedTrayCardId)[0]
+          .size_x,
+        size_y: tracedCards.filter(({ id }) => id == draggedTrayCardId)[0]
+          .size_y,
+      },
+    ]);
   };
 
-  const { transform, setNodeRef } = useDraggable({
-    id: activeItem ? activeItem.id : 0,
-  });
-
-  if (isLoading) return "Загрузка...";
+  useEffect(() => {
+    getFurniture(Number(id) || 0).then((data) => {
+      if (data) {
+        setTracedCards(
+          data?.map((item) => ({
+            fio: item.fio,
+            id: `${item.name}:${item.id}`,
+            coordinates: { x: 0, y: 0 },
+            name: `${item.name}:${item.id}`,
+            size_x: item.size_x,
+            size_y: item.size_y,
+          }))
+        );
+      }
+    });
+  }, [id]);
 
   return (
-    <Container>
-      <DndContext
-        modifiers={[snapCenterToCursor]}
-        onDragStart={async ({ active }) => {
-          canvasRef.current?.fitContentToView({
-            scale: 1,
-            duration: 150,
-          });
-          setTimeout(() => {
-            setActiveItem(
-              startItems.find((el) => el.id === active.id)
-                ? {
-                    ...startItems.find((el) => el.id === active.id)!,
-                    x: 0,
-                    y: 0,
-                    type: 0,
-                    name: "",
-                  }
-                : null
-            );
-          }, 150);
-        }}
-        onDragEnd={addDraggedTrayCardToCanvas}
-      >
-        <MapSidebar furnites={startItems} />
-        <div ref={setNodeRef} className="relative">
-          <InfiniteCanvas
-            canvasRef={canvasRef}
-            firstCards={startItems}
-            setFirstCards={setStartItems}
-            mapItems={mapItems}
-            setMapItems={setMapItems}
+    <DndContext
+      onDragStart={({ active }) => setDraggedTrayCardId(active.id)}
+      onDragEnd={addDraggedTrayCardToCanvas}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col h-[75vh] justify-between">
+          <div className="w-80 flex flex-wrap">
+            {tracedCards.map((trayCard) => {
+              if (cards.find((card) => card.id === trayCard.id)) return null;
+
+              return <Addable card={trayCard} key={trayCard.id} />;
+            })}
+          </div>
+          <AddFurnitureBlock updateData={() => {}} />
+        </div>
+        <div className="w-3/4">
+          <Canvas
+            cards={cards}
+            setCards={setCards}
+            transform={transform}
+            setTransform={setTransform}
           />
         </div>
-        <DragOverlay>
-          {(() => {
-            console.log(activeItem);
-            if (!activeItem) return;
-            return (
-              <div
-                className={cn(
-                  "box-border rounded text-black cursor-grab text-center",
-                  itemColor[
-                    Number(activeItem?.id?.toString().split("_")[0]) %
-                      itemColor.length
-                  ]
-                )}
-                style={{
-                  width: CELL_SIZE * activeItem.size_x,
-                  height: CELL_SIZE * activeItem.size_y,
-                  ...(transform
-                    ? {
-                        // temporary change to this position when dragging
-                        transform: `translate3d(${transform.x}px, ${transform.y}px, 0px)`,
-                      }
-                    : {
-                        // zoom to canvas zoom
-                        transform: ``,
-                      }),
-                }}
-              ></div>
-            );
-          })()}
-        </DragOverlay>
-      </DndContext>
-    </Container>
+      </div>
+      <DragOverlay>
+        <div
+          style={{
+            transformOrigin: "top left",
+            transform: `scale(${transform.k})`,
+          }}
+          className="trayOverlayCard"
+        >
+          {draggedTrayCardId}
+        </div>
+      </DragOverlay>
+    </DndContext>
   );
 };
-export default Map;
+
+export default MapPage;
