@@ -98,7 +98,7 @@ function InventoriesTable<TValue>({
           }
           className="max-w-sm"
         />
-        {localStorage.getItem("role") === "admit" ? (
+        {localStorage.getItem("role") === "admin" ? (
           <AddInventoryBlock updateData={updateData} />
         ) : (
           <Button disabled>
@@ -142,7 +142,7 @@ function InventoriesTable<TValue>({
                       )}
                     </TableCell>
                   ))}
-                  {localStorage.getItem("role") === "admit" ? (
+                  {localStorage.getItem("role") === "admin" ? (
                     <TableCell className="flex items-center justify-between gap-2">
                       <AssignedEmployeeBlock
                         attachedUser={attachedUser}

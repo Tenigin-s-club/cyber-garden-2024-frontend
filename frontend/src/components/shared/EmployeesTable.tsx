@@ -67,7 +67,7 @@ function EmployeesTable<TValue>({ columns, data, updateData }: Props<TValue>) {
           }
           className="max-w-sm"
         />
-        {localStorage.getItem("role") === "admit" ? (
+        {localStorage.getItem("role") === "admin" ? (
           <AddEmployeeBlock updateData={updateData} />
         ) : (
           <Button disabled>
@@ -112,7 +112,7 @@ function EmployeesTable<TValue>({ columns, data, updateData }: Props<TValue>) {
                     </TableCell>
                   ))}
 
-                  {localStorage.getItem("role") === "admit" ? (
+                  {localStorage.getItem("role") === "admin" ? (
                     <TableCell className="flex items-center justify-between gap-2">
                       <InventoriesForEmployeeBlock id={data[id]?.id} />
                       <EditEmployeeBlock

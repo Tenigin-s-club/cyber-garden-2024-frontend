@@ -9,7 +9,6 @@ import MainPageAsync from "@/pages/MainPage/MainPage.async";
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 import EmployeesTablePageAsync from "@/pages/EmployeesTablePage/EmployeesTablePage.async";
 import InventoriesTablePageAsync from "@/pages/InventoriesTablePage/InventoriesTablePage.async";
-import { MapLayout } from "@/components/shared/MapLayout";
 import MapPageAsync from "@/pages/MapPage/MapPage.async";
 
 const authRoutes: RouteObject[] = [
@@ -34,16 +33,7 @@ export const appRoutersConfig = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/map/:id",
-    element: (
-      <ProtectedRoute>
-        <MapLayout>
-          <MapPageAsync />
-        </MapLayout>
-      </ProtectedRoute>
-    ),
-  },
+
   {
     path: "/",
     element: <Layout />,
@@ -56,6 +46,10 @@ export const appRoutersConfig = createBrowserRouter([
       {
         path: "/inventories/:id",
         element: <InventoriesTablePageAsync />,
+      },
+      {
+        path: "/map/:id",
+        element: <MapPageAsync />,
       },
     ],
   },

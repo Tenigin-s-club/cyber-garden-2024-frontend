@@ -25,7 +25,7 @@ const MainPage = () => {
         {offices?.length && (
           <div className="w-2/5 flex items-center gap-4 max-lg:w-3/5 max-sm:w-full max-sm:mt-4">
             <Input />
-            {localStorage.getItem("role") === "admit" ? (
+            {localStorage.getItem("role") === "admin" ? (
               <AddOfficeBlock updateData={updateData} />
             ) : (
               <Button disabled>
