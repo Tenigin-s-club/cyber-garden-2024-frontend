@@ -92,6 +92,34 @@ export const attachInventory = async (
     return false;
   }
 };
+export const attachFurniture = async (
+  user_id: string,
+  furniture_ids: number[]
+) => {
+  try {
+    const res = await axiosInstance.post("/build/attach/furniture", {
+      furniture_ids,
+      user_id,
+    });
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    showErrorNotification(error.message);
+    return false;
+  }
+};
+export const deleteAttachFurniture = async (inventory_id: number) => {
+  try {
+    const res = await axiosInstance.delete(
+      `/build/attach/furniture/employee/${inventory_id}`
+    );
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    showErrorNotification(error.message);
+    return false;
+  }
+};
 
 export const deleteAttachInventory = async (inventory_id: number) => {
   try {

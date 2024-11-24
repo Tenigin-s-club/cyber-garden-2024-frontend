@@ -68,21 +68,19 @@ export function AssignedEmployeeBlock({
           <Title size="md" text="Назначить сотруднику" />
         </DialogHeader>
         <div>
-          <div>
-            <Input value={search} onChange={(e) => setSearch(e.target.value)} />
-            <ScrollArea className="h-[300px] w-full border-none mt-4 rounded-md border p-4">
-              {searchEmployeesData.map((employee) => (
-                <div className="border-b flex items-center justify-between py-3">
-                  <p>{employee.fio}</p>
-                  <Link
-                    color="#16a34a"
-                    className="cursor-pointer"
-                    onClick={() => toggleAttachedUser(employee.id)}
-                  />
-                </div>
-              ))}
-            </ScrollArea>
-          </div>
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} />
+          <ScrollArea className="h-[300px] w-full border-none mt-4 rounded-md border p-4">
+            {searchEmployeesData.map((employee) => (
+              <div className="border-b flex items-center justify-between py-3">
+                <p>{employee.fio}</p>
+                <Link
+                  color="#16a34a"
+                  className="cursor-pointer"
+                  onClick={() => toggleAttachedUser(employee.id)}
+                />
+              </div>
+            ))}
+          </ScrollArea>
         </div>
       </DialogContent>
     </Dialog>
