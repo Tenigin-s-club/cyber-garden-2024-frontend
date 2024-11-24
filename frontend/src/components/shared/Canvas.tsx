@@ -56,7 +56,7 @@ export const Canvas = ({
   return (
     <div
       ref={updateAndForwardRef}
-      className="overflow-hidden rounded border border-chocolate bg-snow w-full"
+      className=" rounded border border-chocolate bg-snow w-full"
     >
       <div
         className="canvas"

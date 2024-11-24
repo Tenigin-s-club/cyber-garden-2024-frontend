@@ -5,7 +5,7 @@ import Container from "../ui/container";
 
 export const MapLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <div className="max-h-screen overflow-hidden">
+    <div>
       <Container>
         <TopBar />
       </Container>

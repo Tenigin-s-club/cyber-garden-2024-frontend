@@ -13,6 +13,7 @@ export const Draggable = ({ card }: { card: AddingFurnite }) => {
     <div
       key={`${card.id}`}
       style={{
+        zIndex: 100,
         width: CELL_SIZE * card.size_x,
         height: CELL_SIZE * card.size_y,
         top: card.y,
