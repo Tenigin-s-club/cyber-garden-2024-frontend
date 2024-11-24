@@ -7,7 +7,7 @@ import {
   UniqueIdentifier,
   useDraggable,
 } from "@dnd-kit/core";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ClientRect, Coordinates, Translate } from "@dnd-kit/core/dist/types";
 import { CELL_SIZE } from "@/lib/constants/size";
 import { AddingFurnite, MapSidebar } from "@/components/shared/MapSidebar";
@@ -16,6 +16,8 @@ import { itemColor } from "@/components/shared/SidebarItem";
 import { cn } from "@/lib/utils";
 import { snapCenterToCursor } from "@dnd-kit/modifiers";
 import Container from "@/components/ui/container";
+import { requestFloors, requestFurniture } from "@/services/Map/map";
+import { useParams } from "react-router-dom";
 
 export type Card = {
   id: UniqueIdentifier;
@@ -40,74 +42,42 @@ const calculateCanvasPosition = (
 
 const Map = () => {
   const canvasRef = useRef<ReactInfiniteCanvasHandle>();
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [mapItems, setMapItems] = useState<
+    { office_id: number; name: string; id: number; items: AddingFurnite[] }[]
+  >([]);
+  const [startItems, setStartItems] = useState<
+    {
+      name: string;
+      size_x: number;
+      size_y: number;
+      id: number;
+    }[]
+  >([]);
+  const { id = "" } = useParams();
+  useEffect(() => {
+    setIsLoading(true);
+    (async () => {
+      const floorsRes = await requestFloors(id);
+      setMapItems(
+        floorsRes.data.map(
+          (el: { office_id: number; name: string; id: number }) => ({
+            ...el,
+            items: {},
+          })
+        )
+      );
+      const furnRes = await requestFurniture();
+      setStartItems(
+        furnRes.data.map(
+          (el: { name: string; size_x: number; size_y: number; id: number }) =>
+            el
+        )
+      );
+    })();
+    setIsLoading(false);
+  }, [id]);
   const [activeItem, setActiveItem] = useState<null | AddingFurnite>(null);
-  const [startData, setStartData] = useState<AddingFurnite[]>([
-    {
-      id: 1,
-      x: 0,
-      y: 0,
-      size_y: 5,
-      size_x: 2,
-      name: "Велодорожка",
-      floor_id: 0,
-    },
-    {
-      id: 2,
-      x: 0,
-      y: 0,
-      size_y: 2,
-      size_x: 2,
-      name: "Стол",
-      floor_id: 0,
-    },
-    {
-      x: 150,
-      y: 100,
-      id: 100000,
-      size_x: 2,
-      size_y: 2,
-      name: "test",
-      floor_id: 0,
-    },
-    {
-      x: 210,
-      y: 100,
-      id: 10,
-      size_x: 2,
-      size_y: 2,
-      name: "test",
-      floor_id: 0,
-    },
-    {
-      x: 180,
-      y: 20,
-      id: 100,
-      size_x: 2,
-      size_y: 5,
-      name: "test",
-      floor_id: 0,
-    },
-    {
-      x: 250,
-      y: 40,
-      id: 1000,
-      size_x: 1,
-      size_y: 2,
-      name: "test",
-      floor_id: 0,
-    },
-    {
-      x: 300,
-      y: 40,
-      id: 10000,
-      size_x: 1,
-      size_y: 2,
-      name: "test",
-      floor_id: 0,
-    },
-  ]);
-  const [mapItems, setMapItems] = useState<AddingFurnite[][]>([[]]);
 
   const addDraggedTrayCardToCanvas = ({
     over,
@@ -116,7 +86,6 @@ const Map = () => {
   }: DragEndEvent) => {
     setActiveItem(null);
     if (!over?.id.toString().includes("canvas")) {
-      setStartData((prev) => (activeItem ? [...prev, activeItem] : prev));
       return;
     }
 
@@ -130,7 +99,7 @@ const Map = () => {
       return;
 
     if (
-      mapItems[Number(over.id.toString().split("_").at(-1))].find(
+      mapItems[Number(over.id.toString().split("_").at(-1))].items.find(
         (card) =>
           active.rect.current.initial &&
           card.x ===
@@ -142,33 +111,36 @@ const Map = () => {
     ) {
       return;
     }
-    setStartData((prev) => prev.filter((el) => el.id !== active.id));
-    setMapItems((prev) => ({
+    setMapItems((prev) => [
       ...prev,
-      [activeItem.floor_id]: [
-        ...(prev[activeItem.floor_id] || []), // Инициализируем массив, если он не существует
-        {
-          ...activeItem,
-          x:
-            calculateCanvasPosition(active.rect.current.initial!, over, delta)
-              .x -
-            (calculateCanvasPosition(active.rect.current.initial!, over, delta)
-              .x %
-              CELL_SIZE),
-          y:
-            calculateCanvasPosition(active.rect.current.initial!, over, delta)
-              .y -
-            (calculateCanvasPosition(active.rect.current.initial!, over, delta)
-              .y %
-              CELL_SIZE),
-        },
-      ],
-    }));
+      {
+        ...prev[
+          prev.findIndex(
+            (el) => el.id === Number(over.id.toString().split("_").at(-1))
+          )
+        ],
+        ...activeItem,
+        office_id: Number(id),
+        items: [],
+        x:
+          calculateCanvasPosition(active.rect.current.initial!, over, delta).x -
+          (calculateCanvasPosition(active.rect.current.initial!, over, delta)
+            .x %
+            CELL_SIZE),
+        y:
+          calculateCanvasPosition(active.rect.current.initial!, over, delta).y -
+          (calculateCanvasPosition(active.rect.current.initial!, over, delta)
+            .y %
+            CELL_SIZE),
+      },
+    ]);
   };
 
   const { transform, setNodeRef } = useDraggable({
     id: activeItem ? activeItem.id : 0,
   });
+
+  if (isLoading) return "Загрузка...";
 
   return (
     <Container>
@@ -180,18 +152,27 @@ const Map = () => {
             duration: 150,
           });
           setTimeout(() => {
-            setActiveItem(startData.find((el) => el.id === active.id) || null);
-            setStartData((prev) => prev.filter((el) => el.id !== active.id));
+            setActiveItem(
+              startItems.find((el) => el.id === active.id)
+                ? {
+                    ...startItems.find((el) => el.id === active.id)!,
+                    x: 0,
+                    y: 0,
+                    type: 0,
+                    name: "",
+                  }
+                : null
+            );
           }, 150);
         }}
         onDragEnd={addDraggedTrayCardToCanvas}
       >
-        <MapSidebar furnites={startData} />
+        <MapSidebar furnites={startItems} />
         <div ref={setNodeRef} className="relative">
           <InfiniteCanvas
             canvasRef={canvasRef}
-            firstCards={startData}
-            setFirstCards={setStartData}
+            firstCards={startItems}
+            setFirstCards={setStartItems}
             mapItems={mapItems}
             setMapItems={setMapItems}
           />

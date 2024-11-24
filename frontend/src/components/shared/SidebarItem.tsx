@@ -17,11 +17,7 @@ export const SidebarItem = ({
   size_x,
   size_y,
   style,
-  x,
-  y,
 }: {
-  x: number;
-  y: number;
   id: number;
   size_x: number;
   size_y: number;
@@ -41,9 +37,6 @@ export const SidebarItem = ({
       style={{
         width: CELL_SIZE * size_x,
         height: CELL_SIZE * size_y,
-        // marginTop: -CELL_SIZE * size_y,
-        left: x,
-        top: y,
         ...style,
       }}
       className={cn(

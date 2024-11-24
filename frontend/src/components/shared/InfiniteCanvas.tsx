@@ -10,14 +10,25 @@ export const InfiniteCanvas = ({
   mapItems,
   setMapItems,
 }: {
-  firstCards: AddingFurnite[];
+  firstCards: { name: string; size_x: number; size_y: number; id: number }[];
   canvasRef: React.MutableRefObject<ReactInfiniteCanvasHandle | undefined>;
-  setFirstCards: React.Dispatch<React.SetStateAction<AddingFurnite[]>>;
-  mapItems: AddingFurnite[][];
-  setMapItems: React.Dispatch<React.SetStateAction<AddingFurnite[][]>>;
+  setFirstCards: React.Dispatch<
+    React.SetStateAction<
+      { name: string; size_x: number; size_y: number; id: number }[]
+    >
+  >;
+  mapItems: {
+    office_id: number;
+    name: string;
+    id: number;
+    items: AddingFurnite[];
+  }[];
+  setMapItems: React.Dispatch<
+    React.SetStateAction<
+      { office_id: number; name: string; id: number; items: AddingFurnite[] }[]
+    >
+  >;
 }) => {
-  // const canvasRef = useRef<ReactInfiniteCanvasHandle>();
-
   return (
     <>
       <div
@@ -28,37 +39,6 @@ export const InfiniteCanvas = ({
           position: "relative",
         }}
       >
-        {/* <ReactInfiniteCanvas
-          ref={canvasRef}
-          onCanvasMount={(mountFunc: ReactInfiniteCanvasHandle) => {
-            mountFunc.fitContentToView({
-              scale: 1,
-              offset: {
-                x: 0,
-                y:
-                  ((Object.keys(mapItems).length * 30 +
-                    (Object.keys(mapItems).length - 1) * 5) *
-                    -CELL_SIZE) /
-                  3,
-              },
-            });
-          }}
-          customComponents={[
-            {
-              component: (
-                <button
-                  onClick={() => {
-                    canvasRef.current?.fitContentToView({ scale: 1 });
-                  }}
-                >
-                  fitToView
-                </button>
-              ),
-              position: 0,
-              offset: { x: 0, y: 0 },
-            },
-          ]}
-        > */}
         <div>
           {Object.keys(mapItems).map((el) => (
             <Area
@@ -72,7 +52,15 @@ export const InfiniteCanvas = ({
         </div>
         <button
           onClick={() => {
-            mapItems[mapItems.length] = [];
+            setMapItems((prev) => [
+              ...prev,
+              {
+                office_id: prev[0].office_id,
+                name: "Этаж",
+                id: Math.floor(Math.random() * 10_000_000),
+                items: [],
+              },
+            ]);
           }}
           style={{ width: CELL_SIZE * 30, height: CELL_SIZE * 5 }}
           className="text-8xl border border-stone-300"

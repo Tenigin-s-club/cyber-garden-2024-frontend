@@ -18,10 +18,28 @@ export const Area = ({
   mapCards,
 }: {
   id: number;
-  setFirstCards: React.Dispatch<React.SetStateAction<AddingFurnite[]>>;
-  setMapCards: React.Dispatch<React.SetStateAction<AddingFurnite[][]>>;
-  firstCards: AddingFurnite[];
-  mapCards: AddingFurnite[][];
+  setFirstCards: React.Dispatch<
+    React.SetStateAction<
+      { name: string; size_x: number; size_y: number; id: number }[]
+    >
+  >;
+  setMapCards: React.Dispatch<
+    React.SetStateAction<
+      { office_id: number; name: string; id: number; items: AddingFurnite[] }[]
+    >
+  >;
+  firstCards: {
+    name: string;
+    size_x: number;
+    size_y: number;
+    id: number;
+  }[];
+  mapCards: {
+    office_id: number;
+    name: string;
+    id: number;
+    items: AddingFurnite[];
+  }[];
 }) => {
   const [activeItem, setActiveItem] = useState<null | AddingFurnite>(null);
   const { setNodeRef } = useDroppable({
@@ -32,19 +50,10 @@ export const Area = ({
     console.log(delta, activeItem);
     if ((!delta.x && !delta.y) || !activeItem) return;
     console.log(over);
-    setMapCards((prev: AddingFurnite[][]) => ({
+    setMapCards((prev) => [
       ...prev,
-      [activeItem.floor_id]: [
-        ...prev[activeItem.floor_id].filter(
-          (el: AddingFurnite) => el.id !== activeItem.id
-        ),
-        {
-          ...activeItem,
-          x: activeItem.x + delta.x - ((activeItem.x + delta.x) % 20),
-          y: activeItem.y + delta.y - ((activeItem.y + delta.y) % 20),
-        },
-      ],
-    }));
+      { ...activeItem, office_id: prev[0].office_id, items: [] },
+    ]);
   };
 
   const { transform } = useDraggable({
@@ -75,7 +84,10 @@ export const Area = ({
       >
         <DndContext
           onDragStart={({ active }) => {
-            setActiveItem(mapCards[id].find((q) => q.id === active.id) || null);
+            mapCards.forEach((el) => {
+              const res = el.items.find((t) => t.id === active.id);
+              if (res) setActiveItem(res);
+            });
           }}
           onDragEnd={updateDraggedCardPosition}
         >
@@ -120,8 +132,9 @@ export const Area = ({
                   );
                 })()}
               </DragOverlay>
-              {mapCards[id] &&
-                mapCards[id].map((card) => (
+              {mapCards
+                .find((el) => el.id === id)
+                ?.items.map((card) => (
                   <Draggable card={card} key={card.id} />
                 ))}
             </div>

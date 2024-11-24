@@ -8,11 +8,11 @@ export type AddingFurnite = {
   size_x: number;
   size_y: number;
   name: string;
-  floor_id: number;
+  type: number;
 };
 
 interface MapSidebarProps {
-  furnites: AddingFurnite[];
+  furnites: { name: string; size_x: number; size_y: number; id: number }[];
 }
 
 export const MapSidebar: FC<MapSidebarProps> = ({ furnites }) => {
@@ -22,15 +22,13 @@ export const MapSidebar: FC<MapSidebarProps> = ({ furnites }) => {
       style={{ height: "-webkit-fill-available" }}
     >
       <div className="relative p-4 flex flex-col gap-5 rounded-xl">
-        {furnites.map(({ id, size_x, size_y, x, y, name }) => (
+        {furnites.map(({ id, size_x, size_y, name }) => (
           <div className="relative flex gap-1 items-center justify-left">
             <SidebarItem
               style={{
                 backgroundColor: itemColor[id % itemColor.length],
               }}
               id={id}
-              x={x}
-              y={y}
               key={id}
               size_x={size_x}
               size_y={size_y}
