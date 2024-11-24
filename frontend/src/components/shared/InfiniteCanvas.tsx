@@ -22,8 +22,8 @@ export const InfiniteCanvas = ({
     <>
       <div
         style={{
-          width: "100vw",
-          height: "100vh",
+          width: "80vw",
+          height: "80vh",
           border: "1px solid #ccc",
           position: "relative",
         }}

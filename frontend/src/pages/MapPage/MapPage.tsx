@@ -15,6 +15,7 @@ import { InfiniteCanvas } from "@/components/shared/InfiniteCanvas";
 import { itemColor } from "@/components/shared/SidebarItem";
 import { cn } from "@/lib/utils";
 import { snapCenterToCursor } from "@dnd-kit/modifiers";
+import Container from "@/components/ui/container";
 
 export type Card = {
   id: UniqueIdentifier;
@@ -170,7 +171,7 @@ const Map = () => {
   });
 
   return (
-    <>
+    <Container>
       <DndContext
         modifiers={[snapCenterToCursor]}
         onDragStart={async ({ active }) => {
@@ -226,7 +227,7 @@ const Map = () => {
           })()}
         </DragOverlay>
       </DndContext>
-    </>
+    </Container>
   );
 };
 export default Map;
