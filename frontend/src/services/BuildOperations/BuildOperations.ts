@@ -16,12 +16,22 @@ export const addInventory = async (name: string, office_id: string) => {
     return false;
   }
 };
+export const editInventory = async (inventoryId: number, name: string) => {
+  try {
+    const res = await axiosInstance.put(`/build/inventory/${inventoryId}`, {
+      name,
+    });
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    showErrorNotification(error.message);
+    return false;
+  }
+};
 
 export const getInventories = async (id: number) => {
   try {
-    const res = await axiosInstance.get<Inventory[]>(
-      `/build/inventory/${id}?is_free=true`
-    );
+    const res = await axiosInstance.get<Inventory[]>(`/build/inventory/${id}`);
     return res.data;
   } catch (e) {
     const error = e as AxiosError;
@@ -33,7 +43,7 @@ export const getInventories = async (id: number) => {
 export const getFreeInventories = async (id: number) => {
   try {
     const res = await axiosInstance.get<Inventory[]>(
-      `/build/inventory/${id}/?is_free=true`
+      `/build/inventory/${id}/?status=free`
     );
     return res.data;
   } catch (e) {
@@ -46,6 +56,18 @@ export const getFreeInventories = async (id: number) => {
 export const deleteInventory = async (id: number) => {
   try {
     const res = await axiosInstance.delete(`/build/inventory/${id}`);
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    showErrorNotification(error.message);
+    return false;
+  }
+};
+export const deleteEmployeeForInventory = async (id: number) => {
+  try {
+    const res = await axiosInstance.delete(
+      `/build/attach/inventory/employee/${id}`
+    );
     return res.data;
   } catch (e) {
     const error = e as AxiosError;
@@ -71,13 +93,10 @@ export const attachInventory = async (
   }
 };
 
-export const deleteAttachInventory = async (
-  user_id: string,
-  inventory_id: number
-) => {
+export const deleteAttachInventory = async (inventory_id: number) => {
   try {
     const res = await axiosInstance.delete(
-      `/build/attach/inventory/${user_id}/${inventory_id}`
+      `/build/attach/inventory/employee/${inventory_id}`
     );
     return res.data;
   } catch (e) {

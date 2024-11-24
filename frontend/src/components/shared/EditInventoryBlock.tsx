@@ -1,39 +1,34 @@
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
+import { PenLine } from "lucide-react";
 import Title from "../ui/title";
 import AddInventoryForm from "./AddInventoryForm";
 import { useState } from "react";
-import { addInventory } from "@/services/BuildOperations/BuildOperations";
-import { useParams } from "react-router-dom";
+import { editInventory } from "@/services/BuildOperations/BuildOperations";
+import { Inventory } from "@/services/OfficesOperations/OfficesOperations.type";
 
 interface Props {
   updateData: () => void;
+  deFaultInventory: Inventory;
 }
 
-export function AddInventoryBlock({ updateData }: Props) {
+export function EditInventoryBlock({ updateData, deFaultInventory }: Props) {
   const [open, setOpen] = useState(false);
-  const { id } = useParams();
-
   const closeDialog = () => {
     updateData();
     setOpen(false);
   };
   const onSubmitFunc = async (name: string) => {
-    return addInventory(name, id || "");
+    return editInventory(deFaultInventory.id, name);
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Plus />
-          Добавить инвентарь
-        </Button>
+        <PenLine color="#3B82F6" className="cursor-pointer" />
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -42,6 +37,7 @@ export function AddInventoryBlock({ updateData }: Props) {
         <AddInventoryForm
           onSubmitFunc={onSubmitFunc}
           closeDialog={closeDialog}
+          deFaultInventory={deFaultInventory}
         />
       </DialogContent>
     </Dialog>

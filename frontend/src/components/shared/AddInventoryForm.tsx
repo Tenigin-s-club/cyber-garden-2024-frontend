@@ -11,8 +11,7 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
-import { addInventory } from "@/services/BuildOperations/BuildOperations";
-import { useParams } from "react-router-dom";
+import { Inventory } from "@/services/OfficesOperations/OfficesOperations.type";
 
 const addInventorySchema = z.object({
   name: z.string().min(3, {
@@ -22,21 +21,25 @@ const addInventorySchema = z.object({
 
 interface Props {
   closeDialog: () => void;
+  onSubmitFunc: (name: string) => Promise<string | false>;
+  deFaultInventory?: Inventory;
 }
 
-const AddInventoryForm = ({ closeDialog }: Props) => {
-  const { id } = useParams();
-
+const AddInventoryForm = ({
+  closeDialog,
+  onSubmitFunc,
+  deFaultInventory,
+}: Props) => {
   const form = useForm<z.infer<typeof addInventorySchema>>({
     resolver: zodResolver(addInventorySchema),
     defaultValues: {
-      name: "",
+      name: deFaultInventory?.name || "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof addInventorySchema>) {
-    const res = await addInventory(values.name, id || "");
-    if (res) closeDialog();
+    await onSubmitFunc(values.name);
+    closeDialog();
   }
   return (
     <div>
@@ -61,7 +64,7 @@ const AddInventoryForm = ({ closeDialog }: Props) => {
           />
 
           <Button type="submit" className="w-full mt-8">
-            Создать
+            Сохранить
           </Button>
         </form>
       </Form>

@@ -32,14 +32,8 @@ const calculateCanvasPosition = (
     (over?.rect?.top ?? 0 - ((over?.rect?.top ?? 0) % CELL_SIZE)),
 });
 
-<<<<<<< HEAD:frontend/src/pages/MapPage/MapPage.tsx
 const MapPage = () => {
   const [gridSize] = useState(CELL_SIZE);
-=======
-export const Map = () => {
-  const canvasRef = useRef<HTMLDivElement | null>(null);
-
->>>>>>> 8a8a0cc (huesos):frontend/src/pages/MapPage.tsx
   const [activeItem, setActiveItem] = useState<null | AddingFurnite>(null);
   const [startData, setStartData] = useState<AddingFurnite[]>([
     {

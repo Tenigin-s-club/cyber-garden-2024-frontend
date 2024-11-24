@@ -11,8 +11,8 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
-import { addOfficesEmployee } from "@/services/AuthByEmail/AuthByEmail";
-import { useParams } from "react-router-dom";
+
+import { OfficesUser } from "@/services/OfficesOperations/OfficesOperations.type";
 
 const addEmployeeSchema = z.object({
   fio: z.string().min(6, {
@@ -29,23 +29,32 @@ const addEmployeeSchema = z.object({
 
 interface Props {
   closeDialog: () => void;
+  onSubmitFunc: (
+    values: Omit<OfficesUser, "office_id">
+  ) => Promise<string | false>;
+  initialEmployee?: Omit<OfficesUser, "office_id">;
 }
 
-const AddEmployeeForm = ({ closeDialog }: Props) => {
-  const { id } = useParams();
+const AddEmployeeForm = ({
+  closeDialog,
+  onSubmitFunc,
+  initialEmployee,
+}: Props) => {
   const form = useForm<z.infer<typeof addEmployeeSchema>>({
     resolver: zodResolver(addEmployeeSchema),
     defaultValues: {
-      fio: "",
-      position: "",
-      email: "",
-      password: "",
+      fio: initialEmployee?.fio || "",
+      position: initialEmployee?.position || "",
+      email: initialEmployee?.email || "",
+      password: initialEmployee?.password || "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof addEmployeeSchema>) {
-    const res = await addOfficesEmployee({ ...values, office_id: id || "" });
-    if (res) closeDialog();
+  async function onSubmit(
+    values: z.infer<Omit<typeof addEmployeeSchema, "office_id">>
+  ) {
+    await onSubmitFunc(values);
+    closeDialog();
   }
   return (
     <Form {...form}>
@@ -111,7 +120,7 @@ const AddEmployeeForm = ({ closeDialog }: Props) => {
         />
 
         <Button type="submit" className="w-full mt-8">
-          Создать
+          Сохранить
         </Button>
       </form>
     </Form>

@@ -96,7 +96,7 @@ const AddOfficeForm = ({ updateData, closeDialog }: Props) => {
           />
 
           <Button type="submit" className="w-full mt-8">
-            Создать
+            Сохранить
           </Button>
         </form>
       </Form>

@@ -86,6 +86,20 @@ export const addOfficesEmployee = async (employee: OfficesUser) => {
     return false;
   }
 };
+export const editOfficesEmployee = async (
+  id: string,
+  employee: OfficesUser
+) => {
+  try {
+    const res = await axiosInstance.put(`/auth/employee/${id}`, employee);
+
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    showErrorNotification(error.message);
+    return false;
+  }
+};
 
 export const deleteEmployee = async (id: string) => {
   try {

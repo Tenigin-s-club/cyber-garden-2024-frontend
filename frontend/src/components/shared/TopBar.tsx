@@ -31,7 +31,7 @@ const TopBar = () => {
           </li>
           <li>
             <Button
-              variant={pathname === `/map/${id}` ? "secondary" : "default"}
+              variant={pathname === `/map/${id}` ? "default" : "secondary"}
               className="min-w-[150px] w-1/6"
               onClick={() => navigate(`/map/${id}`)}
             >
@@ -42,7 +42,7 @@ const TopBar = () => {
           <li>
             <Button
               variant={
-                pathname === `/employees/${id}` ? "secondary" : "default"
+                pathname === `/employees/${id}` ? "default" : "secondary"
               }
               className="min-w-[150px] w-1/6"
               onClick={() => navigate(`/employees/${id}`)}
@@ -53,7 +53,7 @@ const TopBar = () => {
           <li>
             <Button
               variant={
-                pathname === `/inventories/${id}` ? "secondary" : "default"
+                pathname === `/inventories/${id}` ? "default" : "secondary"
               }
               className="min-w-[150px] w-1/6"
               onClick={() => navigate(`/inventories/${id}`)}

@@ -52,7 +52,7 @@ export function InventoriesForEmployeeTabs({ id }: Props) {
   };
 
   const deleteAssignInventory = async (inventoryId: number) => {
-    await deleteAttachInventory(id, inventoryId);
+    await deleteAttachInventory(inventoryId);
     updateEmployeeInventories();
     updateFreeInventories();
   };

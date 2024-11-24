@@ -18,12 +18,13 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 
-import { PenLine, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import InventoriesForEmployeeBlock from "./InventoriesForEmployeeBlock";
 import { deleteEmployee } from "@/services/AuthByEmail/AuthByEmail";
 import { OfficesEmployee } from "@/services/OfficesOperations/OfficesOperations.type";
 import { AddEmployeeBlock } from "./AddEmployeeBlock";
+import { EditEmployeeBlock } from "./EditEmployeeBlock";
 
 interface Props<TValue> {
   columns: ColumnDef<OfficesEmployee, TValue>[];
@@ -104,8 +105,11 @@ function EmployeesTable<TValue>({ columns, data, updateData }: Props<TValue>) {
                   ))}
                   <TableCell className="flex items-center justify-between gap-2">
                     <InventoriesForEmployeeBlock id={data[id]?.id} />
-                    {/*Нажимаем на эту ерунду выскакивает окно с инвентарем */}
-                    <PenLine color="#3B82F6" className="cursor-pointer" />
+                    <EditEmployeeBlock
+                      employeeId={data[id]?.id}
+                      employee={data[id]}
+                      updateData={updateData}
+                    />
                     <Trash2
                       color="#DC2626"
                       className="cursor-pointer"

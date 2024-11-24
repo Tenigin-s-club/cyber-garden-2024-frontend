@@ -18,7 +18,7 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
-import { PenLine, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { AddInventoryBlock } from "./AddInventoryBlock";
 import { AssignedEmployeeBlock } from "./AssignedEmployeeBlock";
@@ -26,9 +26,14 @@ import {
   Inventory,
   OfficesEmployee,
 } from "@/services/OfficesOperations/OfficesOperations.type";
-import { deleteInventory } from "@/services/BuildOperations/BuildOperations";
+import {
+  attachInventory,
+  deleteEmployeeForInventory,
+  deleteInventory,
+} from "@/services/BuildOperations/BuildOperations";
 import { getOfficesEmployees } from "@/services/OfficesOperations/OfficesOperations";
 import { useParams } from "react-router-dom";
+import { EditInventoryBlock } from "./EditInventoryBlock";
 
 interface Props<TValue> {
   columns: ColumnDef<Inventory, TValue>[];
@@ -71,14 +76,24 @@ function InventoriesTable<TValue>({
     await deleteInventory(id);
     updateData();
   };
+
+  const attachedUser = async (id: string, inventoryId: number) => {
+    await attachInventory(id, [inventoryId]);
+    updateData();
+  };
+
+  const deleteAttachedUser = async (inventoryId: number) => {
+    await deleteEmployeeForInventory(inventoryId);
+    updateData();
+  };
   return (
     <div>
       <div className="flex items-center py-4 justify-between gap-2">
         <Input
           placeholder="Искать по Названию..."
-          value={(table.getColumn("fio")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("fio")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -121,11 +136,15 @@ function InventoriesTable<TValue>({
                   ))}
                   <TableCell className="flex items-center justify-between gap-2">
                     <AssignedEmployeeBlock
-                      inventoryId={data[id]?.id}
+                      attachedUser={attachedUser}
+                      inventory={data[id]}
                       employeesData={employeesData}
+                      deleteAttachedUser={deleteAttachedUser}
                     />
-                    {/*Нажимаем на эту ерунду выскакивает окно с инвентарем */}
-                    <PenLine color="#3B82F6" className="cursor-pointer" />
+                    <EditInventoryBlock
+                      deFaultInventory={data[id]}
+                      updateData={updateData}
+                    />
                     <Trash2
                       color="#DC2626"
                       className="cursor-pointer"

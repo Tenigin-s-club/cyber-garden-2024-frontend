@@ -7,10 +7,10 @@ export interface OfficesEmployee {
   id: string;
   fio: string;
   position: string;
-  place: string;
+  place?: string;
   email: string;
   // то, что на столе
-  inventory: OfficesEmployeeInventory[];
+  inventory?: OfficesEmployeeInventory[];
 }
 
 export interface OfficesUser {
@@ -31,5 +31,5 @@ export interface Office {
 export interface Inventory {
   id: number;
   name: string;
-  fio?: string;
+  fio: string | null;
 }
