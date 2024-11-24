@@ -47,6 +47,7 @@ const AddFurnitureForm = ({ closeDialog, onSubmitFunc }: Props) => {
       size_x: Number(values.size_x),
       size_y: Number(values.size_y),
       office_id: 0,
+      fio: "",
     });
     closeDialog();
   }

@@ -24,7 +24,9 @@ export const Draggable = ({
 
   return (
     <Dialog>
-      <AssignedEmployeeFurniture furniture={{ ...card, office_id: 1 }} />
+      <AssignedEmployeeFurniture
+        furniture={{ ...card, id: Number(card.id), office_id: 1 }}
+      />
       <ContextMenu>
         <ContextMenuTrigger>
           <div
