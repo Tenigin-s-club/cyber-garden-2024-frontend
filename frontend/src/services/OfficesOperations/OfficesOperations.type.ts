@@ -18,7 +18,7 @@ export interface OfficesUser {
   fio: string;
   position: string;
   email: string;
-  password: string;
+  password?: string;
 }
 
 export interface Office {
