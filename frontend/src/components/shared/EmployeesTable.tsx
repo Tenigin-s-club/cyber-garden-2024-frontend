@@ -83,18 +83,23 @@ function EmployeesTable<TValue>({ columns, data, updateData }: Props<TValue>) {
           <Button disabled={localStorage.getItem("role") !== "admin"}>
             <label style={{ lineHeight: 0 }}>
               <input
-                accept=".xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                accept=".xlsx;type=application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 className="w-0 h-0"
                 type="file"
                 onInput={async (files) => {
                   if (!files.currentTarget.files) return;
                   try {
+                    const formData = new FormData();
+                    formData.append("file", files.currentTarget.files[0]); // Use the appropriate field name
+
                     await axios.post(
                       `${urls.api}auth/load_employees`,
-                      files.currentTarget.files[0],
+                      formData,
                       {
                         headers: {
-                          "Content-Type": "multipart/form-data",
+                          Authorization: `Bearer ${localStorage.getItem(
+                            "access_token"
+                          )}`,
                         },
                       }
                     );
