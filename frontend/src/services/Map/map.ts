@@ -4,8 +4,8 @@ export const requestFloors = async (id: string | number) => {
   return await axiosInstance.get(`/offices/floors/${id}`);
 };
 
-export const requestFurniture = async () => {
-  return await axiosInstance.get(`/build/furniture`);
+export const requestFurniture = async (id: string | number) => {
+  return await axiosInstance.get(`/build/furniture/${id}`);
 };
 export const requestMapByFloor = async (
   office_id: string | number,

@@ -47,13 +47,45 @@ export const Area = ({
   });
 
   const updateDraggedCardPosition = ({ delta }: DragEndEvent) => {
-    console.log(delta, activeItem);
     if ((!delta.x && !delta.y) || !activeItem) return;
 
-    setMapCards((prev) => [
-      ...prev,
-      { ...activeItem, office_id: prev[0].office_id, items: [] },
-    ]);
+    console.log(
+      mapCards,
+      id,
+      mapCards.findIndex((t) => t.office_id === id),
+      mapCards[mapCards.findIndex((t) => t.office_id === id)]
+        ? [
+            ...mapCards.filter((r) => r.office_id !== id),
+            {
+              ...mapCards.find((t) => t.id === id)!,
+              items: [
+                ...mapCards
+                  .find((t) => t.id === id)!
+                  .items.filter((y) => y.id !== activeItem.id),
+                activeItem,
+              ],
+            },
+            { ...activeItem, office_id: mapCards[0].office_id, items: [] },
+          ]
+        : mapCards.filter((r) => r.of !== id)
+    );
+    setMapCards((prev) =>
+      prev[prev.findIndex((t) => t.office_id === id)]
+        ? [
+            ...prev.filter((r) => r.office_id !== id),
+            {
+              ...prev.find((t) => t.id === id)!,
+              items: [
+                ...prev
+                  .find((t) => t.id === id)!
+                  .items.filter((y) => y.id !== activeItem.id),
+                activeItem,
+              ],
+            },
+            { ...activeItem, office_id: prev[0].office_id, items: [] },
+          ]
+        : prev.filter((r) => r.id !== id)
+    );
   };
 
   const { transform } = useDraggable({

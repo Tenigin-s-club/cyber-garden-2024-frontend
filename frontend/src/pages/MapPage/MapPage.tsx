@@ -67,7 +67,7 @@ const Map = () => {
           })
         )
       );
-      const furnRes = await requestFurniture();
+      const furnRes = await requestFurniture(id);
       setStartItems(
         furnRes.data.map(
           (el: { name: string; size_x: number; size_y: number; id: number }) =>
