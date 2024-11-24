@@ -25,12 +25,12 @@ export function AddOfficeBlock({ updateData }: Props) {
       <DialogTrigger asChild>
         <Button>
           <Plus />
-          Добавить оффис
+          Добавить офис
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <Title size="md" text="Оффис" />
+          <Title size="md" text="Офис" />
         </DialogHeader>
         <AddOfficeForm closeDialog={closeDialog} updateData={updateData} />
       </DialogContent>

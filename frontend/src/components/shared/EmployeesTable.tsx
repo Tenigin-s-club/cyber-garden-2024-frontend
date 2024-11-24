@@ -26,6 +26,9 @@ import { OfficesEmployee } from "@/services/OfficesOperations/OfficesOperations.
 import { AddEmployeeBlock } from "./AddEmployeeBlock";
 import { EditEmployeeBlock } from "./EditEmployeeBlock";
 import { Button } from "../ui/button";
+import { showErrorNotification } from "@/lib/helpers/notification";
+import axios from "axios";
+import { urls } from "@/lib/constants/urls";
 
 interface Props<TValue> {
   columns: ColumnDef<OfficesEmployee, TValue>[];
@@ -58,7 +61,7 @@ function EmployeesTable<TValue>({ columns, data, updateData }: Props<TValue>) {
 
   return (
     <div>
-      <div className="flex items-center py-4 justify-between gap-2">
+      <div className="flex items-center py-4 justify-between gap-2 flex-wrap">
         <Input
           placeholder="Искать по ФИО..."
           value={(table.getColumn("fio")?.getFilterValue() as string) ?? ""}
@@ -67,14 +70,43 @@ function EmployeesTable<TValue>({ columns, data, updateData }: Props<TValue>) {
           }
           className="max-w-sm"
         />
-        {localStorage.getItem("role") === "admin" ? (
-          <AddEmployeeBlock updateData={updateData} />
-        ) : (
-          <Button disabled>
-            <Plus />
-            Добавить сотрудника
+
+        <div className="flex gap-4">
+          {localStorage.getItem("role") === "admin" ? (
+            <AddEmployeeBlock updateData={updateData} />
+          ) : (
+            <Button disabled>
+              <Plus />
+              Добавить сотрудника
+            </Button>
+          )}
+          <Button disabled={localStorage.getItem("role") !== "admin"}>
+            <label style={{ lineHeight: 0 }}>
+              <input
+                accept=".xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                className="w-0 h-0"
+                type="file"
+                onInput={async (files) => {
+                  if (!files.currentTarget.files) return;
+                  try {
+                    await axios.post(
+                      `${urls.api}auth/load_employees`,
+                      files.currentTarget.files[0],
+                      {
+                        headers: {
+                          "Content-Type": "multipart/form-data",
+                        },
+                      }
+                    );
+                  } catch (e) {
+                    showErrorNotification(e as string);
+                  }
+                }}
+              />
+              <p>Импорт сотрудников (Excel)</p>
+            </label>
           </Button>
-        )}
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
