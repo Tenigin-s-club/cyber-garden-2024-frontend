@@ -40,9 +40,9 @@ export const InfiniteCanvas = ({
         }}
       >
         <div>
-          {Object.keys(mapItems).map((el) => (
+          {mapItems.map((el) => (
             <Area
-              id={Number(el)}
+              id={Number(el.id)}
               firstCards={firstCards}
               setFirstCards={setFirstCards}
               mapCards={mapItems}

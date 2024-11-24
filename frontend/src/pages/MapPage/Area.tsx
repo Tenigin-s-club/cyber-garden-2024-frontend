@@ -46,10 +46,10 @@ export const Area = ({
     id: `canvas_area_${id}`,
   });
 
-  const updateDraggedCardPosition = ({ delta, over }: DragEndEvent) => {
+  const updateDraggedCardPosition = ({ delta }: DragEndEvent) => {
     console.log(delta, activeItem);
     if ((!delta.x && !delta.y) || !activeItem) return;
-    console.log(over);
+
     setMapCards((prev) => [
       ...prev,
       { ...activeItem, office_id: prev[0].office_id, items: [] },
@@ -93,7 +93,7 @@ export const Area = ({
         >
           <div ref={updateAndForwardRef}>
             <span className="top-0 left-0 absolute p-3 text-sm bg-slate-200">
-              Этаж {id + 1}
+              Этаж
             </span>
             <div
               className="canvas"

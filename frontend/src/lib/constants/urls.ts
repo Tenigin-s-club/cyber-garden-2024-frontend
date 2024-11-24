@@ -1,4 +1,4 @@
 export const urls = {
-  api: "https://huisos.online/api/",
+  api: "http://localhost:8080/api/",
   app: "http://localhost:5173/",
 };

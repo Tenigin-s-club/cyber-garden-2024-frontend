@@ -63,7 +63,7 @@ const Map = () => {
         floorsRes.data.map(
           (el: { office_id: number; name: string; id: number }) => ({
             ...el,
-            items: {},
+            items: [],
           })
         )
       );
@@ -97,43 +97,137 @@ const Map = () => {
       !activeItem
     )
       return;
-
+    console.log(
+      mapItems
+        .find((el) => el.id === Number(over.id.toString().split("_").at(-1)))
+        ?.items.find(
+          (card) =>
+            active.rect.current.initial &&
+            card.x ===
+              calculateCanvasPosition(active.rect.current.initial, over, delta)
+                .x &&
+            card.y ===
+              calculateCanvasPosition(active.rect.current.initial, over, delta)
+                .y
+        )
+    );
     if (
-      mapItems[Number(over.id.toString().split("_").at(-1))].items.find(
-        (card) =>
-          active.rect.current.initial &&
-          card.x ===
-            calculateCanvasPosition(active.rect.current.initial, over, delta)
-              .x &&
-          card.y ===
-            calculateCanvasPosition(active.rect.current.initial, over, delta).y
-      )
+      mapItems
+        .find((el) => el.id === Number(over.id.toString().split("_").at(-1)))
+        ?.items.find(
+          (card) =>
+            active.rect.current.initial &&
+            card.x ===
+              calculateCanvasPosition(active.rect.current.initial, over, delta)
+                .x &&
+            card.y ===
+              calculateCanvasPosition(active.rect.current.initial, over, delta)
+                .y
+        )
     ) {
       return;
     }
-    setMapItems((prev) => [
-      ...prev,
-      {
-        ...prev[
-          prev.findIndex(
-            (el) => el.id === Number(over.id.toString().split("_").at(-1))
-          )
-        ],
-        ...activeItem,
-        office_id: Number(id),
-        items: [],
-        x:
-          calculateCanvasPosition(active.rect.current.initial!, over, delta).x -
-          (calculateCanvasPosition(active.rect.current.initial!, over, delta)
-            .x %
-            CELL_SIZE),
-        y:
-          calculateCanvasPosition(active.rect.current.initial!, over, delta).y -
-          (calculateCanvasPosition(active.rect.current.initial!, over, delta)
-            .y %
-            CELL_SIZE),
-      },
-    ]);
+    console.log(
+      over.id.toString().split("_"),
+      [
+        ...mapItems.filter(
+          (el) => el.id !== Number(over.id.toString().split("_").at(-1))
+        ),
+        {
+          ...mapItems[
+            mapItems.findIndex(
+              (el) => el.id === Number(over.id.toString().split("_").at(-1))
+            )
+          ],
+          items: [
+            ...(mapItems[
+              mapItems.findIndex(
+                (el) => el.id === Number(over.id.toString().split("_").at(-1))
+              )
+            ]?.items ?? []),
+            {
+              ...activeItem,
+              office_id: Number(id),
+              items: [],
+              x:
+                calculateCanvasPosition(
+                  active.rect.current.initial!,
+                  over,
+                  delta
+                ).x -
+                (calculateCanvasPosition(
+                  active.rect.current.initial!,
+                  over,
+                  delta
+                ).x %
+                  CELL_SIZE),
+              y:
+                calculateCanvasPosition(
+                  active.rect.current.initial!,
+                  over,
+                  delta
+                ).y -
+                (calculateCanvasPosition(
+                  active.rect.current.initial!,
+                  over,
+                  delta
+                ).y %
+                  CELL_SIZE),
+            },
+          ],
+        },
+      ].sort((a, b) => a.id - b.id)
+    );
+    setMapItems((prev) =>
+      [
+        ...prev.filter(
+          (el) => el.id !== Number(over.id.toString().split("_").at(-1))
+        ),
+        {
+          ...prev[
+            prev.findIndex(
+              (el) => el.id === Number(over.id.toString().split("_").at(-1))
+            )
+          ],
+          items: [
+            ...(prev[
+              prev.findIndex(
+                (el) => el.id === Number(over.id.toString().split("_").at(-1))
+              )
+            ]?.items ?? []),
+            {
+              ...activeItem,
+              office_id: Number(id),
+              items: [],
+              x:
+                calculateCanvasPosition(
+                  active.rect.current.initial!,
+                  over,
+                  delta
+                ).x -
+                (calculateCanvasPosition(
+                  active.rect.current.initial!,
+                  over,
+                  delta
+                ).x %
+                  CELL_SIZE),
+              y:
+                calculateCanvasPosition(
+                  active.rect.current.initial!,
+                  over,
+                  delta
+                ).y -
+                (calculateCanvasPosition(
+                  active.rect.current.initial!,
+                  over,
+                  delta
+                ).y %
+                  CELL_SIZE),
+            },
+          ],
+        },
+      ].sort((a, b) => a.id - b.id)
+    );
   };
 
   const { transform, setNodeRef } = useDraggable({
